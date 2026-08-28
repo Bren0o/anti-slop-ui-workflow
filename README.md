@@ -32,9 +32,11 @@ Copie `skills/anti-slop-ui-workflow/` para `.claude/skills/` na raiz do projeto.
 A skill é ativada automaticamente quando você pede landing page, hero, pricing, dashboard ou qualquer UI hi-fi — ou invoque com `/anti-slop-ui-workflow`.
 
 ## Pré-requisitos (opcionais, mas é onde a skill brilha)
-- `npx impeccable install` no projeto (responda **project**, não global) — https://impeccable.style
-- LazyWeb MCP — https://www.lazyweb.com
-- Shoogle — https://shoogle.dev
+A skill traz uma seção **Setup das ferramentas** com os comandos de cada uma:
+- Impeccable: `npx impeccable install` (responda **project**, aceite os hooks) — https://impeccable.style
+- LazyWeb MCP: `curl` para obter o token → `claude mcp add --transport http lazyweb <url> --header "Authorization: Bearer <TOKEN>"` — https://www.lazyweb.com
+- Shoogle: sem instalação, copia o prompt do bloco e cola no agente — https://shoogle.dev
+- Web Interface Guidelines — https://interfaces.rauno.me
 
 ## Estrutura
 ```

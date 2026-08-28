@@ -111,6 +111,45 @@ traz código, presets de tokens e um prompt de instalação. Estrela = pago.
 https://interfaces.rauno.me (Web Interface Guidelines): hover, focus, acessibilidade, tipografia,
 interação — coisas básicas provadas por pesquisa. Ler antes de dizer que terminou.
 
+## Setup das ferramentas (fazer uma vez por projeto)
+
+Antes de rodar o fluxo, verificar o que já está instalado (`/skills`, `/mcp`) e configurar o que
+faltar. Nunca gravar token em arquivo versionado — `.mcp.json` com token vai no `.gitignore`.
+
+### Impeccable (skill + hooks)
+```bash
+npx impeccable install      # responder: "project" (não global) · hooks: sim
+```
+Depois: `/reload-plugins` (ou reiniciar o agente) e confirmar que `/impeccable ...` aparece.
+Detector standalone (sem instalar): `npx impeccable detect <url>` · extensão Chrome "Impeccable".
+
+### LazyWeb MCP (pesquisa de referência com base real) — https://www.lazyweb.com
+1. Obter o token com o `curl` publicado na descrição do vídeo/site (devolve um Bearer token):
+   ```bash
+   curl -X POST https://www.lazyweb.com/<endpoint-de-token>   # ver descrição do vídeo
+   ```
+2. Registrar o MCP no Claude Code trocando `<TOKEN>` pelo valor recebido (sem espaços):
+   ```bash
+   claude mcp add --transport http lazyweb https://www.lazyweb.com/<mcp-endpoint> \
+     --header "Authorization: Bearer <TOKEN>"
+   ```
+3. `/reload-plugins` → `/mcp` → `lazyweb` deve listar tools como *search/report/score/mockup*.
+Versão gratuita tem base menor; as pagas trazem mais telas. Prompt de uso: ver passo 5.
+
+### Shoogle (blocos shadcn) — https://shoogle.dev
+Não tem instalação: buscar o bloco, copiar o **prompt** (ou o código) e colar no agente. O prompt
+instala as dependências via shadcn CLI; se pedir para sobrescrever `components/ui/*`, aceitar
+só se o projeto ainda não customizou esses arquivos. React/Next nativo; outra stack → pedir
+adaptação.
+
+### Referências visuais
+- https://dribbble.com · https://dark.design (dark) · templates do Framer → print → colar.
+- https://interfaces.rauno.me — ler antes do checklist final.
+
+### Modelo local (opcional)
+Para rodar `detect`/`audit` com modelo local, checar o que a máquina aguenta em
+https://canirunai.kc1t.com antes de configurar Ollama/LM Studio.
+
 ## Fluxo resumido (o que funciona)
 
 ```
