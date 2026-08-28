@@ -35,8 +35,10 @@ Catálogo nomeado com o motivo de cada padrão: https://impeccable.style/slop �
 Paul Bakaus (criador do jQuery UI, ex-Google for Creators). Quando a skill diz "isso é slop",
 a régua é a dele, não gosto pessoal: cada anti-padrão vem com o porquê. Cite o motivo ao
 apontar um problema, não só o nome do padrão.
-Detector automático (baseado em padrões — **não é exato**, acha "slop" até no GitHub; use o
-olho para confirmar): `npx impeccable detect https://site.com` ou a extensão Chrome.
+Detector automático: `npx impeccable detect https://site.com` (o comando acha mais que a
+extensão Chrome — inclui padrões de **código**, não só visuais). É baseado em padrões, **não é
+exato**: acha "slop" até no GitHub e em README, porque padrão antigo ≠ padrão ruim. Slop é a
+**combinação** de padrões, não um isolado — usar o olho para confirmar cada apontamento.
 
 ## Porta de entrada — primeira pergunta, sempre
 
@@ -71,6 +73,15 @@ invocada mais — o restante do fluxo trabalha **em cima** do rascunho, corrigin
 Cria `PRODUCT.md` e `DESIGN.md`. Responder com o **produto real** (o que é, público, tom).
 Produto inventado → design inventado. Isso molda tudo que vem depois.
 
+Ao terminar, o `init` sugere os próximos passos. Há **dois caminhos** a partir daqui:
+
+| Caminho | Quando | Comandos |
+|---|---|---|
+| **Rápido** (o que o próprio Impeccable recomenda) | Página simples, poucos problemas, quer resultado logo | `/impeccable document` → `/impeccable critique` → `/impeccable polish` |
+| **Auditável** (o do vídeo) | Página com muito slop, quer ver todos os problemas e corrigir um a um com rastro | `/impeccable audit` → passos 2–3 abaixo |
+
+Na dúvida, rodar `audit` primeiro só para medir; se vier pouca coisa, seguir o caminho rápido.
+
 ### 2. `/impeccable audit` — só diagnóstico, não conserta
 Boletim em 5 dimensões (acessibilidade, performance, responsivo, integridade, tipografia/tokens)
 com severidade **P0 → P3**. Slop não é só estética: WCAG, SEO e leitores de tela contam.
@@ -84,8 +95,15 @@ Sair dele com a lista de "recommended actions" e executar **uma de cada vez**.
 | `/impeccable harden` | Blinda contra uso real: input estranho, erro, idioma longo, conexão ruim, estados vazios. Conferir com as seções Interatividade/Toque/Acessibilidade de `references/web-interface-guidelines.md` | Sempre antes de polish |
 | `/impeccable polish` | Refinamento fino. **Não é redesign.** Conferir com Tipografia/Movimento/Design de `references/web-interface-guidelines.md` | **Por último** — rodar cedo quebra as coisas |
 
-Depois: `/impeccable audit` de novo e prompts pontuais ("ainda há gradientes soltos e fontes
-misturadas; cheque de novo"). Gradientes costumam sobreviver ao primeiro passe.
+**Após cada passe: refresh e olhar a tela.** Cada comando pode introduzir regressão pequena
+(texto colado, espaçamento quebrado) — checar antes de rodar o próximo. Depois: `/impeccable
+audit` de novo e prompts pontuais ("ainda há gradientes soltos e fontes misturadas; cheque de
+novo"). Gradientes costumam sobreviver ao primeiro passe.
+
+**Regra do loop:** tudo que entra de fora — bloco do Shoogle, referência copiada, componente
+gerado — passa por `audit` → correção → `audit` outra vez. "Copiou? Melhora com Impeccable.
+Viu o audit errado? Melhora com Impeccable." O fluxo não tem fim declarado; para quando o
+audit não traz P0/P1 e o detect só aponta o que você decidiu manter.
 
 ### 4. Referência visual "no olho" (mais rápido que extrair tokens)
 - Fontes: https://dribbble.com, https://dark.design (landings dark), Framer templates.
@@ -103,11 +121,15 @@ relatórios, mockups baseados em telas de mercado. Prompt em 3 passos, sem alter
 3. *"Aplique esses 5 itens usando nossos tokens e a fonte do DESIGN.md."*
 
 ### 6. Componentes prontos (Shoogle, https://shoogle.dev)
-Buscador de blocos shadcn (React/Next): "pricing", "hero section", "landing" etc. Cada bloco
-traz código, presets de tokens e um prompt de instalação. Estrela = pago.
-- Colar o bloco **quebra** fonte, espaçamento e cores do projeto → depois de colar, rodar
-  `/impeccable typeset` + `polish` ou pedir explicitamente: *"use os tokens de cor e fonte da
-  minha landing"*.
+Buscador de blocos shadcn (React/Next): "pricing", "hero section", "landing", categoria
+*Feature blocks*. Cada bloco traz **três artefatos**: código (copiar direto), *presets* de
+tokens de design (adotar só se quiser os tokens do bloco — senão ignorar e manter o DESIGN.md)
+e um **prompt** de instalação (o caminho mais rápido: colar no agente). Estrela = pago.
+Blocos "flexíveis" (várias estruturas de hero no mesmo componente) rendem mais que os fixos.
+- Colar o bloco **quebra** fonte, espaçamento e cores do projeto (no vídeo: cor manteve em
+  parte, fonte e espaçamento não) → pedir já no prompt de instalação: *"instale usando os
+  tokens de cor e fonte do meu DESIGN.md"*, e depois `/impeccable audit` → `typeset` → `polish`
+  (regra do loop).
 - Outra stack (Vue, Svelte, HTML puro): pedir adaptação à IA; não é nativo.
 
 ### 7. Regras que a web espera (Web Interface Guidelines)
@@ -128,6 +150,8 @@ faltar. Nunca gravar token em arquivo versionado — `.mcp.json` com token vai n
 ```bash
 npx impeccable install      # responder: "project" (não global) · hooks: sim
 ```
+Hooks "sim" porque o detect passa a rodar sozinho a cada mudança — e ver o apontamento
+repetidas vezes é como se aprende o que é slop (gosto se treina; não há skill que faça 100%).
 Depois: `/reload-plugins` (ou reiniciar o agente) e confirmar que `/impeccable ...` aparece.
 Detector standalone (sem instalar): `npx impeccable detect <url>` · extensão Chrome "Impeccable".
 
