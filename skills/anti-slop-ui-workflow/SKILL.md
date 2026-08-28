@@ -40,6 +40,12 @@ resultado. Por isso:
 - Três cards iguais com ícone em cima
 - Card "flutuando" à direita do hero
 - Estrutura navbar → hero (texto esq. / imagem dir.) → 3 features → pricing → CTA, sempre igual
+- O que o `detect` mais pega (medido nos exemplos deste repo, 45 ocorrências numa landing "bonita"):
+  `ai-color-palette` (ciano/roxo neon em fundo escuro — 27×), `kicker-above-heading` (label
+  pequeno em caixa alta acima de todo título — 5×), `icon-tile-stack` (ícone em quadradinho +
+  título + texto, repetido), `line-length` (> 80 caracteres), `gpt-thin-border-wide-shadow`
+  (borda 1px + sombra de 50px), `dark-glow` (box-shadow colorido), `overused-font` (Inter, Roboto,
+  Geist, Space Grotesk, Plus Jakarta), `blinking-cursor` (terminal fake com cursor piscando)
 
 Catálogo nomeado com o motivo de cada padrão: https://impeccable.style/slop — escrito por
 Paul Bakaus (criador do jQuery UI, ex-Google for Creators). Quando a skill diz "isso é slop",
@@ -75,6 +81,9 @@ FlowBase`). Regras do rascunho:
 - Aceitar que vai sair slop: gradiente no título, card flutuando à direita, três cards. É o
   ponto de partida para medir e corrigir, não a entrega.
 - Rodar uma vez só. Não ficar iterando com a Pro Max — a iteração é do Impeccable.
+- **Se o Impeccable não está instalado (nem o npm nem a skill local `impeccable`), não rode a
+  Pro Max.** O rascunho dela só vale como coisa a ser desmontada; sem quem desmonte, ele vira a
+  entrega. Nesse caso: referência real (passo 4) + regras desta skill + `ai-slop-check`, direto.
 
 Depois, medir a baseline e instalar o Impeccable:
 ```bash

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowBase — CI/CD para times pequenos</title>
+<style>
+  :root{
+    --bg:#0b0f14;
+    --bg-2:#111820;
+    --surface:#161f2a;
+    --border:#243140;
+    --text:#e8edf3;
+    --muted:#94a3b8;
+    --accent:#22d3a5;
+    --accent-2:#5eead4;
+    --warn:#fbbf24;
+    --danger:#f87171;
+    --radius:12px;
+    --max:1120px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  code,pre,.mono{font-family:"JetBrains Mono","Fira Code",Consolas,"SFMono-Regular",Menlo,monospace}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+  h1,h2,h3{line-height:1.15;letter-spacing:-0.02em}
+  .eyebrow{display:inline-block;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:8px;font-weight:600;font-size:.95rem;border:1px solid transparent;transition:transform .15s ease,background .15s ease,border-color .15s ease;cursor:pointer}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:var(--accent);color:#04120d}
+  .btn-primary:hover{background:var(--accent-2)}
+  .btn-ghost{background:transparent;border-color:var(--border);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--muted)}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);background:rgba(11,15,20,.8);border-bottom:1px solid var(--border)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem}
+  .logo-mark{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--accent),#0ea5e9);display:grid;place-items:center}
+  .logo-mark::after{content:"";width:12px;height:12px;border-radius:2px;background:#04120d;transform:rotate(45deg)}
+  nav ul{display:flex;gap:28px;list-style:none;font-size:.92rem;color:var(--muted)}
+  nav ul a:hover{color:var(--text)}
+  .nav-cta{display:flex;gap:10px}
+  @media(max-width:760px){nav ul{display:none}}
+
+  /* HERO */
+  .hero{padding:96px 0 72px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:
+    radial-gradient(600px 300px at 20% 0%,rgba(34,211,165,.12),transparent 70%),
+    radial-gradient(500px 300px at 90% 20%,rgba(14,165,233,.10),transparent 70%);pointer-events:none}
+  .hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:center;position:relative}
+  .hero h1{font-size:clamp(2.4rem,5vw,3.6rem);font-weight:800;margin-bottom:20px}
+  .hero h1 span{color:var(--accent)}
+  .hero p.lead{font-size:1.15rem;color:var(--muted);max-width:520px;margin-bottom:32px}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+  .hero-note{font-size:.85rem;color:var(--muted)}
+  .hero-note code{background:var(--surface);border:1px solid var(--border);padding:2px 6px;border-radius:5px;font-size:.8rem}
+  @media(max-width:860px){.hero-grid{grid-template-columns:1fr}.hero{padding:64px 0 48px}}
+
+  /* Terminal mock */
+  .terminal{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 30px 60px rgba(0,0,0,.45);overflow:hidden;font-size:.82rem}
+  .terminal-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+  .terminal-bar i{width:10px;height:10px;border-radius:50%;background:#3b4756;display:block}
+  .terminal-bar i:nth-child(1){background:#ff5f57}.terminal-bar i:nth-child(2){background:#febc2e}.terminal-bar i:nth-child(3){background:#28c840}
+  .terminal-bar span{margin-left:auto;color:var(--muted);font-size:.75rem}
+  .terminal pre{padding:18px 20px;line-height:1.75;overflow-x:auto;color:#c9d4e0}
+  .ok{color:var(--accent)}.dim{color:#5d6b7c}.key{color:#7dd3fc}.str{color:#fcd34d}
+  .step{display:flex;justify-content:space-between}
+  .cursor{display:inline-block;width:8px;height:14px;background:var(--accent);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* LOGOS / TRUST */
+  .trust{padding:32px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg-2)}
+  .trust .wrap{display:flex;gap:40px;align-items:center;justify-content:center;flex-wrap:wrap;color:var(--muted);font-size:.9rem}
+  .trust strong{color:var(--text);font-weight:600}
+
+  /* SECTIONS */
+  section{padding:88px 0}
+  .section-head{max-width:620px;margin-bottom:48px}
+  .section-head h2{font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:700;margin-bottom:14px}
+  .section-head p{color:var(--muted);font-size:1.05rem}
+
+  /* FEATURES */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:#34506a;transform:translateY(-3px)}
+  .card .icon{width:40px;height:40px;border-radius:9px;background:rgba(34,211,165,.12);color:var(--accent);display:grid;place-items:center;margin-bottom:18px;font-size:1.1rem;font-weight:700}
+  .card h3{font-size:1.1rem;margin-bottom:8px}
+  .card p{color:var(--muted);font-size:.95rem}
+  @media(max-width:860px){.features{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.features{grid-template-columns:1fr}}
+
+  /* HOW IT WORKS */
+  .how{background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;counter-reset:step}
+  .stepc{position:relative;padding-top:8px}
+  .stepc::before{counter-increment:step;content:"0" counter(step);font-family:inherit;font-size:2.6rem;font-weight:800;color:transparent;-webkit-text-stroke:1px var(--border);display:block;margin-bottom:10px;line-height:1}
+  .stepc h3{font-size:1.15rem;margin-bottom:8px}
+  .stepc p{color:var(--muted);font-size:.95rem}
+  .stepc code{display:inline-block;margin-top:12px;background:var(--bg);border:1px solid var(--border);padding:6px 10px;border-radius:6px;font-size:.8rem;color:var(--accent-2)}
+  @media(max-width:760px){.steps{grid-template-columns:1fr}}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+  .stat{padding:28px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
+  .stat b{display:block;font-size:2.2rem;font-weight:800;color:var(--accent);letter-spacing:-.03em}
+  .stat span{color:var(--muted);font-size:.9rem}
+  @media(max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+
+  /* PRICING */
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+  .plan{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;display:flex;flex-direction:column;position:relative}
+  .plan.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 20px 50px rgba(34,211,165,.12)}
+  .plan .badge{position:absolute;top:-12px;left:32px;background:var(--accent);color:#04120d;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+  .plan h3{font-size:1.1rem;margin-bottom:6px}
+  .plan .desc{color:var(--muted);font-size:.9rem;margin-bottom:20px}
+  .price{font-size:2.4rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
+  .price small{font-size:.9rem;font-weight:500;color:var(--muted);letter-spacing:0}
+  .plan ul{list-style:none;margin:22px 0 28px;display:grid;gap:10px;font-size:.93rem;color:#c9d4e0}
+  .plan li::before{content:"✓";color:var(--accent);font-weight:700;margin-right:10px}
+  .plan .btn{margin-top:auto;justify-content:center}
+  @media(max-width:860px){.plans{grid-template-columns:1fr}}
+
+  /* TESTIMONIAL */
+  .quote{max-width:760px;margin:0 auto;text-align:center}
+  .quote blockquote{font-size:1.4rem;font-weight:500;line-height:1.5;margin-bottom:24px}
+  .quote blockquote::before{content:"“";color:var(--accent);font-size:2rem;vertical-align:-6px;margin-right:4px}
+  .quote .who{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--muted);font-size:.9rem}
+  .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,var(--accent))}
+
+  /* FAQ */
+  .faq{max-width:760px;margin:0 auto}
+  details{border-bottom:1px solid var(--border);padding:18px 0}
+  summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--muted);font-size:1.3rem;transition:transform .2s}
+  details[open] summary::after{transform:rotate(45deg)}
+  details p{color:var(--muted);margin-top:10px;font-size:.95rem}
+
+  /* CTA */
+  .cta{background:linear-gradient(180deg,var(--bg-2),var(--bg));border-top:1px solid var(--border);text-align:center}
+  .cta h2{font-size:clamp(1.8rem,3.5vw,2.6rem);margin-bottom:14px}
+  .cta p{color:var(--muted);margin-bottom:28px}
+
+  footer{border-top:1px solid var(--border);padding:36px 0;color:var(--muted);font-size:.85rem}
+  footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  footer ul{display:flex;gap:20px;list-style:none}
+  footer a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="#" class="logo"><span class="logo-mark"></span>FlowBase</a>
+    <ul>
+      <li><a href="#features">Recursos</a></li>
+      <li><a href="#how">Como funciona</a></li>
+      <li><a href="#pricing">Preços</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost">Entrar</a>
+      <a href="#pricing" class="btn btn-primary">Começar grátis</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">CI/CD para times pequenos</span>
+      <h1>Pipelines que rodam <span>rápido</span>, sem uma equipe de DevOps.</h1>
+      <p class="lead">FlowBase conecta ao seu repositório, detecta a stack e entrega build, testes e deploy em minutos. Um arquivo YAML, zero YAML-ologia.</p>
+      <div class="hero-actions">
+        <a href="#pricing" class="btn btn-primary">Criar pipeline grátis →</a>
+        <a href="#how" class="btn btn-ghost">Ver como funciona</a>
+      </div>
+      <p class="hero-note">Ou instale via CLI: <code>npx flowbase init</code> · Sem cartão de crédito</p>
+    </div>
+
+    <div class="terminal" aria-hidden="true">
+      <div class="terminal-bar"><i></i><i></i><i></i><span>flowbase.yml · main</span></div>
+<pre><span class="dim">$</span> flowbase run
+<span class="dim">→ Detectado: Node 20 · pnpm · Vitest</span>
+
+<span class="step"><span><span class="ok">✔</span> install</span><span class="dim">12s</span></span>
+<span class="step"><span><span class="ok">✔</span> lint</span><span class="dim">4s</span></span>
+<span class="step"><span><span class="ok">✔</span> test <span class="dim">(142 passed)</span></span><span class="dim">31s</span></span>
+<span class="step"><span><span class="ok">✔</span> build</span><span class="dim">18s</span></span>
+<span class="step"><span><span class="ok">✔</span> deploy <span class="dim">→ preview-a3f2.flowbase.app</span></span><span class="dim">9s</span></span>
+
+<span class="ok">Pipeline concluído em 1m 14s</span> <span class="dim">(cache: 68% hit)</span>
+<span class="dim">$</span> <span class="cursor"></span></pre>
+    </div>
+  </div>
+</header>
+
+<div class="trust">
+  <div class="wrap">
+    <span>Usado por <strong>1.200+</strong> times pequenos</span>
+    <span>·</span>
+    <span>Funciona com <strong>GitHub</strong>, <strong>GitLab</strong> e <strong>Bitbucket</strong></span>
+    <span>·</span>
+    <span><strong>99,95%</strong> de uptime nos últimos 12 meses</span>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Recursos</span>
+      <h2>Tudo que um time de 3 a 15 pessoas precisa. Nada do que não precisa.</h2>
+      <p>Sem plugins para instalar, sem runners para manter, sem dashboards que ninguém abre.</p>
+    </div>
+    <div class="features">
+      <div class="card"><div class="icon">⚡</div><h3>Cache inteligente</h3><p>Dependências e artefatos cacheados automaticamente entre execuções. Builds até 4x mais rápidos sem configurar nada.</p></div>
+      <div class="card"><div class="icon">⟲</div><h3>Preview por branch</h3><p>Cada pull request ganha uma URL de preview. Revisar fica visual, não só um diff.</p></div>
+      <div class="card"><div class="icon">⧉</div><h3>Paralelismo automático</h3><p>Testes divididos entre workers pelo histórico de duração. Você não escreve matriz nenhuma.</p></div>
+      <div class="card"><div class="icon">✓</div><h3>Detecção de stack</h3><p>Node, Python, Go, Rust, Docker. O FlowBase lê seu repositório e sugere o pipeline pronto para editar.</p></div>
+      <div class="card"><div class="icon">☰</div><h3>Logs legíveis</h3><p>Erros destacados, stack traces agrupados e link direto para a linha que quebrou no seu repositório.</p></div>
+      <div class="card"><div class="icon">🔒</div><h3>Secrets seguros</h3><p>Variáveis criptografadas, escopo por ambiente e auditoria de quem acessou o quê.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Como funciona</span>
+      <h2>Do repositório ao deploy em três passos.</h2>
+    </div>
+    <div class="steps">
+      <div class="stepc"><h3>Conecte o repositório</h3><p>Autorize o FlowBase no GitHub, GitLab ou Bitbucket. Nada de tokens copiados à mão.</p><code>flowbase connect</code></div>
+      <div class="stepc"><h3>Aceite o pipeline sugerido</h3><p>Detectamos a stack e geramos um <span class="mono">flowbase.yml</span> de 10 linhas. Edite se quiser — ou não.</p><code>flowbase init</code></div>
+      <div class="stepc"><h3>Faça push</h3><p>Todo commit roda. Todo PR ganha preview. Todo merge na main faz deploy. Só isso.</p><code>git push</code></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat"><b>1m 14s</b><span>tempo médio de pipeline</span></div>
+      <div class="stat"><b>4x</b><span>mais rápido com cache</span></div>
+      <div class="stat"><b>10 linhas</b><span>de YAML, em média</span></div>
+      <div class="stat"><b>0</b><span>runners para você manter</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Preços</span>
+      <h2>Simples e previsível. Sem cobrar por assento.</h2>
+      <p>Preços por time, não por pessoa. Adicione quem quiser.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Hobby</h3>
+        <p class="desc">Para projetos pessoais e side projects.</p>
+        <div class="price">R$ 0<small>/mês</small></div>
+        <ul><li>500 minutos de build/mês</li><li>1 repositório</li><li>Previews por branch</li><li>Cache básico</li></ul>
+        <a href="#" class="btn btn-ghost">Começar grátis</a>
+      </div>
+      <div class="plan featured">
+        <span class="badge">Mais popular</span>
+        <h3>Team</h3>
+        <p class="desc">Para times de até 15 pessoas.</p>
+        <div class="price">R$ 149<small>/mês</small></div>
+        <ul><li>5.000 minutos de build/mês</li><li>Repositórios ilimitados</li><li>Paralelismo automático</li><li>Cache inteligente</li><li>Secrets por ambiente</li><li>Suporte por e-mail em 24h</li></ul>
+        <a href="#" class="btn btn-primary">Testar 14 dias grátis</a>
+      </div>
+      <div class="plan">
+        <h3>Scale</h3>
+        <p class="desc">Para quem passou de 15 e ainda não quer Jenkins.</p>
+        <div class="price">R$ 449<small>/mês</small></div>
+        <ul><li>20.000 minutos de build/mês</li><li>Runners dedicados</li><li>SSO e auditoria</li><li>SLA 99,95%</li><li>Suporte prioritário</li></ul>
+        <a href="#" class="btn btn-ghost">Falar com vendas</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap quote">
+    <blockquote>Migramos do GitHub Actions em uma tarde. O pipeline ficou com 9 linhas e o build caiu de 6 minutos para 1 e meio. Ninguém do time precisou aprender nada novo.</blockquote>
+    <div class="who"><span class="avatar"></span><span><strong style="color:var(--text)">Mariana Costa</strong> · CTO, Lumen Health (6 devs)</span></div>
+  </div>
+</section>
+
+<section id="faq" class="how">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">FAQ</span><h2>Perguntas frequentes</h2></div>
+    <div class="faq">
+      <details open><summary>Preciso migrar meus workflows existentes?</summary><p>Não. O FlowBase roda ao lado do que você já tem. Muitos times começam rodando só os testes e migram o deploy depois.</p></details>
+      <details><summary>Funciona com monorepo?</summary><p>Sim. Detectamos pacotes afetados por commit e rodamos apenas o necessário.</p></details>
+      <details><summary>Onde rodam os builds?</summary><p>Em runners efêmeros na nossa infraestrutura (São Paulo e Virgínia). No plano Scale você pode usar runners dedicados ou self-hosted.</p></details>
+      <details><summary>O que acontece se eu passar dos minutos?</summary><p>Avisamos aos 80% e aos 100%. Você pode comprar minutos extras avulsos — nunca cortamos um pipeline no meio.</p></details>
+      <details><summary>Posso cancelar quando quiser?</summary><p>Sim, sem fidelidade. O cancelamento vale ao fim do ciclo em andamento.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>Seu próximo push pode rodar no FlowBase.</h2>
+    <p>Configuração em 5 minutos. Sem cartão. Sem equipe de DevOps.</p>
+    <a href="#pricing" class="btn btn-primary">Criar pipeline grátis →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 FlowBase. Feito para times pequenos.</span>
+    <ul><li><a href="#">Docs</a></li><li><a href="#">Status</a></li><li><a href="#">Termos</a></li><li><a href="#">Privacidade</a></li></ul>
+  </div>
+</footer>
+
+</body>
+</html>

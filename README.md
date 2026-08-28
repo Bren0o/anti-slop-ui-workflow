@@ -43,6 +43,9 @@ A skill traz uma seção **Setup das ferramentas** com os comandos de cada uma:
 - Componentes: https://ui.aceternity.com · https://21st.dev (público — ler o prompt antes de colar)
 - Web Interface Guidelines — https://interfaces.rauno.me
 
+## Prova: mesmo prompt, com e sem a skill
+`npx impeccable detect` na landing "FlowBase" gerada pelo mesmo modelo: **45 anti-padrões sem a skill → 9 com a skill → 0 após polish** (mobile: 42 → 0). HTMLs, relatórios e comparação em [`examples/`](examples/README.md).
+
 ## Estrutura
 ```
 skills/
@@ -51,6 +54,7 @@ skills/
     └── references/
         ├── web-interface-guidelines.md              # checklist condensado de interfaces.rauno.me
         └── ferramentas-de-referencia-e-geracao.md   # Mobbin/Pinterest/Dribbble, Stitch/v0/Subframe, modelo por tarefa, catálogos, prompt injection
+examples/                                            # FlowBase com/sem skill + relatórios do detect
 ```
 
 ## Licença

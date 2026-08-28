@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlowBase — CI/CD para times pequenos</title>
+<meta name="description" content="FlowBase roda os pipelines de CI/CD do seu time pequeno: um arquivo YAML, cache automático e um log que dá para ler. Sem plano enterprise para chegar no básico.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Tokens (DESIGN.md em miniatura) ----------
+     Direção: "ferramenta de trabalho", não "startup deck".
+     Fonte de UI e fonte de código da mesma família (2 fontes no máximo).
+     Cor de marca: teal escuro, uma só. Verde/vermelho/âmbar são semânticos (status), não decoração.
+     Fundo e texto tonalizados (nunca #fff/#000 puros).
+     Espaçamento em múltiplos de 4. Raio pequeno (4/6px) — coisa de terminal, não de card SaaS.
+  */
+  :root {
+    --bg:        #F6F7F8;
+    --surface:   #FFFFFF;
+    --surface-2: #EEF0F2;
+    --ink:       #15181C;
+    --ink-2:     #4B535C;
+    --ink-3:     #7B838B;
+    --line:      #D9DDE1;
+    --line-2:    #C4C9CF;
+    --brand:     #0E6E7C;
+    --brand-ink: #0A525C;
+    --brand-tint:#E3F1F3;
+    --pass:      #1A7F37;
+    --pass-tint: #DDF3E3;
+    --fail:      #B42318;
+    --fail-tint: #FBE4E1;
+    --run:       #B54708;
+    --run-tint:  #FCEBD9;
+    --term-bg:   #1B1F24;
+    --term-ink:  #D6DBE0;
+    --term-dim:  #7D8590;
+    --term-ok:   #57C36A;
+    --term-warn: #E3A552;
+    --term-cmd:  #9CD0DB;
+    --yaml-str:  #7A4B00;
+
+    --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+    --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 24px;
+    --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+
+    --r-1: 4px; --r-2: 6px;
+    --focus: 0 0 0 2px var(--bg), 0 0 0 4px var(--brand);
+    --measure: 62ch;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--brand-tint); color: var(--brand-ink); }
+  a { color: var(--brand-ink); text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+    outline: none; box-shadow: var(--focus);
+  }
+  h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; line-height: 1.15; }
+  h1 { font-size: clamp(32px, 4.5vw, 56px); letter-spacing: -0.02em; }
+  h2 { font-size: clamp(24px, 2.6vw, 32px); }
+  h3 { font-size: 18px; }
+  p  { margin: 0; }
+  code, kbd, pre { font-family: var(--mono); font-size: 0.9em; }
+  .num { font-variant-numeric: tabular-nums; }
+  .wrap { width: min(1120px, 100% - 2 * var(--s-5)); margin-inline: auto; }
+  .muted { color: var(--ink-2); }
+  .eyebrow { font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.02em; text-transform: uppercase; }
+
+  /* ---------- Botões ---------- */
+  .btn {
+    display: inline-flex; align-items: center; gap: var(--s-2);
+    min-height: 44px; padding: 0 var(--s-4);
+    border-radius: var(--r-2); border: 1px solid transparent;
+    font: 500 15px/1 var(--sans); text-decoration: none; cursor: pointer;
+    user-select: none; -webkit-tap-highlight-color: transparent;
+    transition: background-color 120ms ease, border-color 120ms ease;
+  }
+  .btn-primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .btn-primary:active { background: var(--brand-ink); transform: scale(0.98); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line-2); }
+  .btn-ghost:active { background: var(--surface-2); transform: scale(0.98); }
+  @media (hover: hover) {
+    .btn-primary:hover { background: var(--brand-ink); border-color: var(--brand-ink); }
+    .btn-ghost:hover { background: var(--surface); border-color: var(--ink-3); }
+    .nav a:hover { color: var(--ink); }
+  }
+
+  /* ---------- Nav ---------- */
+  .top {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; min-height: 60px; gap: var(--s-4); }
+  .logo { display: inline-flex; align-items: center; gap: var(--s-2); font-weight: 600; color: var(--ink); text-decoration: none; }
+  .logo svg { display: block; }
+  .nav { display: flex; gap: var(--s-1); align-items: center; }
+  .nav a { color: var(--ink-2); text-decoration: none; padding: var(--s-3); font-size: 15px; border-radius: var(--r-1); }
+  .nav .btn { margin-left: var(--s-2); }
+  .nav-links { display: contents; }
+  @media (max-width: 720px) { .nav-links { display: none; } }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: var(--s-8) 0 var(--s-6); }
+  .hero-grid { display: grid; gap: var(--s-6); grid-template-columns: minmax(0, 1fr); }
+  .hero-copy { max-width: 46rem; }
+  .hero h1 { max-width: 20ch; }
+  .hero .lead { margin-top: var(--s-4); font-size: clamp(17px, 1.6vw, 20px); color: var(--ink-2); max-width: var(--measure); }
+  .hero .cta { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-5); align-items: center; }
+  .hero .cta small { color: var(--ink-3); font-size: 13px; }
+
+  /* ---------- Run view (o produto, não um mockup) ---------- */
+  .run {
+    margin-top: var(--s-6);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-2);
+    overflow: hidden;
+  }
+  .run-head {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-4);
+    padding: var(--s-3) var(--s-4);
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-2);
+    font-size: 14px;
+  }
+  .run-head .branch { font-family: var(--mono); font-size: 13px; }
+  .run-head .sha { font-family: var(--mono); font-size: 13px; color: var(--ink-3); }
+  .run-head .right { margin-left: auto; display: flex; gap: var(--s-4); color: var(--ink-2); }
+  .status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 2px var(--s-2); border-radius: var(--r-1);
+    font-size: 13px; font-weight: 500; line-height: 20px;
+  }
+  .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .status.pass { color: var(--pass); background: var(--pass-tint); }
+  .status.fail { color: var(--fail); background: var(--fail-tint); }
+  .status.run  { color: var(--run);  background: var(--run-tint); }
+  .status.run::before { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: 0.35; } }
+
+  .run-body { display: grid; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 880px) { .run-body { grid-template-columns: 300px minmax(0, 1fr); } }
+
+  .jobs { list-style: none; margin: 0; padding: var(--s-2) 0; border-bottom: 1px solid var(--line); }
+  @media (min-width: 880px) { .jobs { border-bottom: 0; border-right: 1px solid var(--line); } }
+  .jobs li {
+    display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; gap: var(--s-3);
+    padding: var(--s-2) var(--s-4); font-size: 14px;
+  }
+  .jobs li[aria-current="true"] { background: var(--brand-tint); }
+  .jobs .dot { width: 10px; height: 10px; border-radius: 50%; justify-self: center; }
+  .jobs .dot.pass { background: var(--pass); }
+  .jobs .dot.fail { background: var(--fail); }
+  .jobs .dot.run  { background: var(--run); animation: pulse 1.2s ease-in-out infinite; }
+  .jobs .dot.wait { background: transparent; border: 2px solid var(--line-2); }
+  .jobs .name { font-family: var(--mono); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .jobs .t { font-family: var(--mono); font-size: 13px; color: var(--ink-3); }
+
+  .log {
+    margin: 0; padding: var(--s-4);
+    background: var(--term-bg); color: var(--term-ink);
+    font: 400 13px/1.7 var(--mono);
+    overflow-x: auto; white-space: pre;
+    min-height: 260px;
+  }
+  .log .ts { color: var(--term-dim); }
+  .log .ok { color: var(--term-ok); }
+  .log .warn { color: var(--term-warn); }
+  .log .cmd { color: var(--term-cmd); }
+
+  /* ---------- Seções ---------- */
+  section { padding: var(--s-8) 0; }
+  section + section { border-top: 1px solid var(--line); }
+  .sec-head { max-width: var(--measure); }
+  .sec-head p { margin-top: var(--s-3); color: var(--ink-2); font-size: 17px; }
+
+  /* Como funciona: passos numerados em coluna, com o YAML real ao lado */
+  .how { display: grid; gap: var(--s-6); margin-top: var(--s-6); grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 880px) { .how { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
+  .steps { list-style: none; margin: 0; padding: 0; counter-reset: step; }
+  .steps li { position: relative; padding: 0 0 var(--s-5) 44px; counter-increment: step; }
+  .steps li::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute; left: 0; top: 2px;
+    font: 500 13px/24px var(--mono); color: var(--brand-ink);
+    width: 28px; height: 24px; text-align: center;
+    background: var(--brand-tint); border-radius: var(--r-1);
+  }
+  .steps li + li { border-top: 1px solid var(--line); padding-top: var(--s-5); }
+  .steps li + li::before { top: calc(var(--s-5) + 2px); }
+  .steps h3 { margin-bottom: var(--s-1); }
+  .steps p { color: var(--ink-2); font-size: 15px; }
+
+  .yaml {
+    margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-2);
+    overflow: hidden; align-self: start;
+  }
+  .yaml figcaption {
+    display: flex; justify-content: space-between; gap: var(--s-3);
+    padding: var(--s-2) var(--s-4); background: var(--surface-2); border-bottom: 1px solid var(--line);
+    font: 500 13px/1.5 var(--mono); color: var(--ink-2);
+  }
+  .yaml pre { margin: 0; padding: var(--s-4); overflow-x: auto; font-size: 13px; line-height: 1.65; }
+  .yaml .k { color: var(--brand-ink); }
+  .yaml .c { color: var(--ink-3); }
+  .yaml .s { color: var(--yaml-str); }
+
+  /* Comparação: uma tabela, não três cards */
+  .table-wrap { margin-top: var(--s-6); overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 640px; }
+  th, td { text-align: left; padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th { font-size: 13px; font-weight: 500; color: var(--ink-2); background: var(--surface-2); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td:first-child { font-weight: 500; }
+  td.fb { background: var(--brand-tint); color: var(--brand-ink); }
+  th.fb { color: var(--brand-ink); }
+  .foot-note { margin-top: var(--s-3); font-size: 13px; color: var(--ink-3); max-width: var(--measure); }
+
+  /* Números medidos (não "10x mais rápido") */
+  .stats { display: grid; gap: var(--s-4); margin-top: var(--s-6); grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: var(--s-4) 0; border-top: 2px solid var(--ink); }
+  .stat b { display: block; font: 500 clamp(28px, 3vw, 40px)/1.1 var(--mono); letter-spacing: -0.02em; }
+  .stat span { display: block; margin-top: var(--s-2); color: var(--ink-2); font-size: 14px; }
+
+  /* Pricing: duas linhas de preço, uma lista, sem "mais popular" */
+  .price { display: grid; gap: var(--s-4); margin-top: var(--s-6); grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 720px) { .price { grid-template-columns: 1fr 1fr; } }
+  .plan { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-2); padding: var(--s-5); display: flex; flex-direction: column; gap: var(--s-4); }
+  .plan .amount { font: 500 36px/1 var(--mono); letter-spacing: -0.02em; }
+  .plan .amount small { font: 400 14px/1 var(--sans); color: var(--ink-2); margin-left: var(--s-1); }
+  .plan ul { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-2); font-size: 15px; color: var(--ink-2); }
+  .plan li { display: grid; grid-template-columns: 16px 1fr; gap: var(--s-2); align-items: start; }
+  .plan li svg { margin-top: 4px; color: var(--pass); }
+  .plan .btn { margin-top: auto; align-self: start; }
+
+  /* Formulário de acesso */
+  .signup { background: var(--surface); border-top: 1px solid var(--line); }
+  .signup .wrap { display: grid; gap: var(--s-5); align-items: start; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 880px) { .signup .wrap { grid-template-columns: minmax(0, 1fr) 420px; } }
+  form { display: grid; gap: var(--s-3); }
+  label { font-size: 14px; font-weight: 500; }
+  .field { position: relative; }
+  .field svg { position: absolute; left: 12px; top: 50%; translate: 0 -50%; color: var(--ink-3); pointer-events: none; }
+  input[type="email"] {
+    width: 100%; min-height: 44px; padding: 0 var(--s-3) 0 40px;
+    font: 400 16px/1 var(--sans); color: var(--ink);
+    background: var(--bg); border: 1px solid var(--line-2); border-radius: var(--r-2);
+  }
+  input[type="email"]::placeholder { color: var(--ink-3); }
+  input:user-invalid { border-color: var(--fail); }
+  .hint { font-size: 13px; color: var(--ink-3); }
+  .err { display: none; font-size: 13px; color: var(--fail); }
+  input:user-invalid ~ .err { display: block; }
+
+  /* Footer */
+  footer { padding: var(--s-6) 0; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-6); justify-content: space-between; }
+  footer nav { display: flex; gap: var(--s-4); flex-wrap: wrap; }
+  footer a { color: var(--ink-2); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#" aria-label="FlowBase, início">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="18" height="18" rx="3" stroke="currentColor" stroke-width="2"/>
+        <path d="M5 13.5 8.5 7l3 4.5L15 6" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      FlowBase
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <div class="nav-links">
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#comparar">Comparar</a>
+        <a href="#precos">Preços</a>
+        <a href="https://docs.flowbase.example">Docs</a>
+      </div>
+      <a class="btn btn-ghost" href="#acesso">Entrar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="h1">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">CI/CD para times de 2 a 20 pessoas</p>
+        <h1 id="h1" style="margin-top: var(--s-3)">Pipelines que o time inteiro consegue ler.</h1>
+        <p class="lead">Um arquivo <code>flowbase.yml</code>, cache de dependências sem configurar nada e um log que mostra o que quebrou — não onde procurar. Sem plano enterprise para ter o básico.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#acesso">Criar pipeline</a>
+          <a class="btn btn-ghost" href="#como-funciona">Ver um run de verdade</a>
+          <small>Grátis até 400 min/mês. Sem cartão.</small>
+        </div>
+      </div>
+
+      <!-- A "imagem do hero" é o próprio produto: um run como o time vê todo dia. -->
+      <div class="run" aria-label="Exemplo de um run do FlowBase: 5 jobs, um falhou">
+        <div class="run-head">
+          <span class="status fail">Falhou</span>
+          <span class="branch">fix/checkout-timeout</span>
+          <span class="sha">a91c4e2</span>
+          <span class="right num"><span>4 de 5 jobs</span><span>2 min 18 s</span></span>
+        </div>
+        <div class="run-body">
+          <ol class="jobs" aria-label="Jobs deste run">
+            <li><span class="dot pass" aria-hidden="true"></span><span class="name">install</span><span class="t num">12 s <span class="muted">(cache)</span></span></li>
+            <li><span class="dot pass" aria-hidden="true"></span><span class="name">lint</span><span class="t num">9 s</span></li>
+            <li><span class="dot pass" aria-hidden="true"></span><span class="name">typecheck</span><span class="t num">31 s</span></li>
+            <li aria-current="true"><span class="dot fail" aria-hidden="true"></span><span class="name">test · checkout</span><span class="t num">1 min 26 s</span></li>
+            <li><span class="dot wait" aria-hidden="true"></span><span class="name">deploy · staging</span><span class="t num">pulado</span></li>
+          </ol>
+          <pre class="log" aria-label="Log do job test · checkout"><span class="ts">14:02:11</span> <span class="cmd">$ pnpm test --filter checkout</span>
+<span class="ts">14:02:14</span> restaurando cache pnpm-store (218 MB) … <span class="ok">ok</span>
+<span class="ts">14:03:29</span> <span class="ok">✓</span> 118 testes passaram
+<span class="ts">14:03:37</span> <span class="warn">✗</span> 1 teste falhou
+
+  checkout/payment.test.ts › aplica cupom expirado
+  Expected: status 422
+  Received: status 500
+
+  <span class="ts">→ src/checkout/coupon.ts:41</span>
+  <span class="ts">   41 |</span> const rule = rules.find(r => r.code === code)
+  <span class="ts">   42 |</span> return rule.validUntil &gt; now   <span class="warn">// rule é undefined</span>
+
+<span class="ts">14:03:37</span> job encerrado com código 1 · deploy · staging não executado</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="como-funciona" aria-labelledby="h-como">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Como funciona</p>
+        <h2 id="h-como" style="margin-top: var(--s-3)">Do commit ao deploy em um arquivo.</h2>
+        <p>Você descreve os jobs; o FlowBase decide a ordem pelas dependências, cacheia o que se repete e roda em paralelo o que dá.</p>
+      </div>
+      <div class="how">
+        <ol class="steps">
+          <li>
+            <h3>Conecte o repositório</h3>
+            <p>GitHub, GitLab ou Bitbucket. Cada push abre um run; cada pull request recebe o status na própria PR.</p>
+          </li>
+          <li>
+            <h3>Escreva o <code>flowbase.yml</code></h3>
+            <p>Jobs com <code>needs</code> viram um grafo. Sem <code>needs</code>, rodam em paralelo. Não existe uma segunda sintaxe para "workflows avançados".</p>
+          </li>
+          <li>
+            <h3>Cache sem configurar</h3>
+            <p>O FlowBase reconhece <code>pnpm-lock.yaml</code>, <code>poetry.lock</code>, <code>go.sum</code>, <code>Cargo.lock</code> e guarda a store de dependências entre runs, por branch.</p>
+          </li>
+          <li>
+            <h3>Leia o log, não o procure</h3>
+            <p>Quando um job falha, o trecho do log com a falha vem em primeiro lugar, com o arquivo e a linha do stack trace linkados para o commit.</p>
+          </li>
+        </ol>
+        <figure class="yaml">
+          <figcaption><span>flowbase.yml</span><span class="muted">24 linhas</span></figcaption>
+<pre><span class="k">image:</span> node:22
+<span class="k">cache:</span> auto            <span class="c"># detecta o lockfile</span>
+
+<span class="k">jobs:</span>
+  <span class="k">install:</span>
+    <span class="k">run:</span> pnpm install --frozen-lockfile
+
+  <span class="k">lint:</span>
+    <span class="k">needs:</span> [install]
+    <span class="k">run:</span> pnpm lint
+
+  <span class="k">typecheck:</span>
+    <span class="k">needs:</span> [install]
+    <span class="k">run:</span> pnpm tsc --noEmit
+
+  <span class="k">test:</span>
+    <span class="k">needs:</span> [install]
+    <span class="k">matrix:</span> { filter: [checkout, catalog, auth] }
+    <span class="k">run:</span> pnpm test --filter <span class="s">${{ matrix.filter }}</span>
+
+  <span class="k">deploy-staging:</span>
+    <span class="k">needs:</span> [lint, typecheck, test]
+    <span class="k">only:</span> main
+    <span class="k">run:</span> ./scripts/deploy.sh staging</pre>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="comparar" aria-labelledby="h-comp">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Comparar</p>
+        <h2 id="h-comp" style="margin-top: var(--s-3)">O que muda para um time pequeno.</h2>
+        <p>Não é sobre ter mais recursos. É sobre não precisar de um "engenheiro de CI" para manter o pipeline funcionando.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Tarefa</th>
+              <th scope="col" class="fb">FlowBase</th>
+              <th scope="col">GitHub Actions</th>
+              <th scope="col">Jenkins auto-hospedado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cache de dependências</td>
+              <td class="fb">Automático pelo lockfile</td>
+              <td>Action <code>actions/cache</code> + chave manual</td>
+              <td>Plugin + volume no agente</td>
+            </tr>
+            <tr>
+              <td>Paralelismo</td>
+              <td class="fb">Tudo sem <code>needs</code> roda junto</td>
+              <td>Jobs paralelos; <code>needs</code> por job</td>
+              <td>Stages <code>parallel</code> no Jenkinsfile</td>
+            </tr>
+            <tr>
+              <td>Achar a falha no log</td>
+              <td class="fb">Trecho da falha primeiro, linha linkada ao commit</td>
+              <td>Log completo; grupos colapsáveis</td>
+              <td>Log bruto; depende de plugin</td>
+            </tr>
+            <tr>
+              <td>Manutenção do runner</td>
+              <td class="fb">Nenhuma</td>
+              <td>Nenhuma (runners hospedados)</td>
+              <td>Sua: atualizações, disco, agentes</td>
+            </tr>
+            <tr>
+              <td>Sintaxe do pipeline</td>
+              <td class="fb">1 arquivo, 8 chaves</td>
+              <td>1 arquivo por workflow; marketplace de actions</td>
+              <td>Groovy (declarativo ou scripted)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="foot-note">Comparação com base na documentação pública em agosto de 2026. Se algo estiver desatualizado, <a href="mailto:hi@flowbase.example">avise</a> — a gente corrige.</p>
+
+      <div class="stats" aria-label="Números medidos em produção">
+        <div class="stat"><b class="num">38 s</b><span>mediana do <code>install</code> com cache, em 1.2 mil repositórios Node</span></div>
+        <div class="stat"><b class="num">2,4 min</b><span>mediana do commit ao status na PR</span></div>
+        <div class="stat"><b class="num">0</b><span>minutos gastos atualizando runner no último ano</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="precos" aria-labelledby="h-preco">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Preços</p>
+        <h2 id="h-preco" style="margin-top: var(--s-3)">Dois planos. Os dois têm tudo.</h2>
+        <p>A diferença é só quantos minutos de build você usa. Nenhum recurso fica atrás de um plano maior.</p>
+      </div>
+      <div class="price">
+        <article class="plan" aria-labelledby="p-free">
+          <div>
+            <h3 id="p-free">Grátis</h3>
+            <p class="muted" style="font-size:14px">Para projetos pequenos e side projects.</p>
+          </div>
+          <p class="amount num">R$ 0<small>/ mês</small></p>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>400 minutos de build por mês</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Repositórios ilimitados, públicos ou privados</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Cache, paralelismo, matriz, deploy</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>2 runs simultâneos</li>
+          </ul>
+          <a class="btn btn-ghost" href="#acesso">Começar grátis</a>
+        </article>
+        <article class="plan" aria-labelledby="p-team">
+          <div>
+            <h3 id="p-team">Time</h3>
+            <p class="muted" style="font-size:14px">Para times que fazem deploy toda semana.</p>
+          </div>
+          <p class="amount num">R$ 149<small>/ mês, por time</small></p>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>4.000 minutos incluídos; R$ 0,04 por minuto extra</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Até 20 pessoas, sem cobrança por assento</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>10 runs simultâneos</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Logs guardados por 90 dias (grátis: 14)</li>
+          </ul>
+          <a class="btn btn-primary" href="#acesso">Assinar o plano Time</a>
+        </article>
+      </div>
+      <p class="foot-note">Precisa de runners próprios ou SSO? Não temos plano enterprise; <a href="mailto:hi@flowbase.example">conversa com a gente</a> e a gente diz se cabe.</p>
+    </div>
+  </section>
+
+  <section id="acesso" class="signup" aria-labelledby="h-acesso">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 id="h-acesso">Rode o primeiro pipeline hoje.</h2>
+        <p>Conecte o repositório, commite um <code>flowbase.yml</code> de oito linhas e veja o run. Se não gostar, não tem nada para desinstalar.</p>
+      </div>
+      <form action="https://app.flowbase.example/signup" method="post">
+        <label for="email">E-mail de trabalho</label>
+        <div class="field">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="m2 4.5 6 4 6-4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <input id="email" name="email" type="email" required autocomplete="email" spellcheck="false" inputmode="email" placeholder="voce@empresa.com.br" aria-describedby="email-hint">
+          <p class="err" role="alert">Informe um e-mail válido, como nome@empresa.com.br.</p>
+        </div>
+        <p id="email-hint" class="hint">Enviamos um link de acesso. Sem senha, sem newsletter.</p>
+        <button class="btn btn-primary" type="submit">Receber link de acesso</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 FlowBase · São Paulo, Brasil</span>
+    <nav aria-label="Rodapé">
+      <a href="https://docs.flowbase.example">Documentação</a>
+      <a href="https://status.flowbase.example">Status</a>
+      <a href="/privacidade">Privacidade</a>
+      <a href="/termos">Termos</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

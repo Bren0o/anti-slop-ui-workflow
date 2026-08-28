@@ -1,0 +1,22 @@
+
+http://127.0.0.1:8765/com-skill/index.html
+  [low-contrast] 3.6:1 (need 4.5:1) — text #7b838b on #f6f7f8
+    → Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.
+  [all-caps-body] text-transform: uppercase on 34 chars of body text
+    → Long passages in uppercase are hard to read. We recognize words by shape (ascenders and descenders), which all-caps removes. Reserve uppercase for short labels and headings.
+  [cramped-padding] 0px vertical padding (need ≥4.5px for 15px text)
+    → Text is too close to the edge of its container. Two shapes: (1) an element with its own text where the padding is too low for the font size, and (2) a wrapper with text-bearing children and near-zero padding against a visible boundary (border, outline, or non-transparent background) — children land flush against the boundary line. Add at least 8px (ideally 12–16px) of padding inside bordered, outlined, or colored containers.
+  [low-contrast] 3.6:1 (need 4.5:1) — text #7b838b on #f6f7f8
+    → Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.
+  [cramped-padding] <div> "table-wrap": children flush against border+bg on all sides (no inset)
+    → Text is too close to the edge of its container. Two shapes: (1) an element with its own text where the padding is too low for the font size, and (2) a wrapper with text-bearing children and near-zero padding against a visible boundary (border, outline, or non-transparent background) — children land flush against the boundary line. Add at least 8px (ideally 12–16px) of padding inside bordered, outlined, or colored containers.
+  [low-contrast] 3.6:1 (need 4.5:1) — text #7b838b on #f6f7f8
+    → Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.
+  [low-contrast] 3.6:1 (need 4.5:1) — text #7b838b on #f6f7f8
+    → Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.
+  [low-contrast] 3.8:1 (need 4.5:1) — text #7b838b on #ffffff
+    → Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.
+  [cramped-padding] 0px vertical padding (need ≥4.5px for 15px text)
+    → Text is too close to the edge of its container. Two shapes: (1) an element with its own text where the padding is too low for the font size, and (2) a wrapper with text-bearing children and near-zero padding against a visible boundary (border, outline, or non-transparent background) — children land flush against the boundary line. Add at least 8px (ideally 12–16px) of padding inside bordered, outlined, or colored containers.
+
+9 anti-patterns found.
