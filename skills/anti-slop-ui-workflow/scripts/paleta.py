@@ -61,12 +61,19 @@ def terminal():
 
 
 def html(saida):
-    modelo = pathlib.Path(__file__).resolve().parent.parent / "references" / "paleta-preview.html"
+    candidatos = [
+        pathlib.Path(__file__).resolve().parent.parent / "references" / "paleta-preview.html",
+        pathlib.Path.home() / ".claude" / "skills" / "anti-slop-ui-workflow" / "references" / "paleta-preview.html",
+        pathlib.Path.cwd() / ".claude" / "skills" / "anti-slop-ui-workflow" / "references" / "paleta-preview.html",
+    ]
+    modelo = next((c for c in candidatos if c.exists()), None)
+    if modelo is None:
+        sys.exit("paleta-preview.html não encontrado (skill anti-slop-ui-workflow instalada?)")
     src = modelo.read_text(encoding="utf-8")
     ini = src.index("const PROJETO")
     fim = src.index("// ===== FIM =====")
     novo = f'const PROJETO = {json.dumps(PROJETO, ensure_ascii=False)};\nconst PALETAS = {json.dumps(PALETAS, ensure_ascii=False, indent=2)};\n'
-    out = pathlib.Path(saida)
+    out = pathlib.Path(saida).resolve()
     out.write_text(src[:ini] + novo + src[fim:], encoding="utf-8")
     return out
 

@@ -93,6 +93,12 @@ rodada só), e mostrar paleta em vez de descrever cor em texto:
    via MCP recusa). Então perguntar: no Claude Code, `AskUserQuestion` com as 3–4 paletas como
    opções (o seletor nativo do terminal); em Codex/Cursor, pergunta em texto "qual número?". A
    escolhida vira o `:root` / `DESIGN.md`. Sem browser (SSH, CI): só o terminal já basta.
+   **A prévia é editável**: cada amostra abre o seletor de cor do sistema (roda/espectro), as
+   fontes têm menu, o mockup e o contraste AA atualizam ao vivo; "Duplicar" cria um card livre.
+   O usuário clica **Copiar tokens** e cola o `:root` + JSON no chat — o agente usa esse bloco
+   literalmente, sem "corrigir" a escolha. Sempre oferecer as duas saídas: número **ou** tokens
+   colados. Pedido real que originou isso: "e se eu quiser escolher? seria bom ter um arco de
+   escolha de paleta".
 3. **Tela e escala do usuário**: perguntar resolução e escala do Windows (o comum é 1366×768 ou
    1920×1080 a **125–150 %**). Regra de tamanho independente da resposta:
    - `h1` no máximo **60 px** (`clamp(34px, 4.6vw, 60px)`), `h2` ≤ 38 px, números/preços ≤ 44 px,
