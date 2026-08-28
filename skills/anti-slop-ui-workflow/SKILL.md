@@ -24,6 +24,10 @@ resultado. Por isso:
 2. **Copiar referência real + polir** vence "gerar do zero".
 3. **Não é milagre.** Impeccable melhora acessibilidade, hierarquia, tokens e robustez — não
    transforma vibe-code em site premiado. Gosto vem de olhar referência e de ler as regras.
+   **`detect` em 0 não é entrega.** Testado: uma landing só com as regras desta skill zerou o
+   detector e o usuário disse "não vi diferença" — sem referência real (passo 4) e sem uma
+   direção estética escolhida (`frontend-aesthetic-direction`), tirar o slop deixa a página
+   correta e sem graça. A régua final é o olho de quem pediu, não o contador.
 4. **Skill boa dá gosto; skill ruim gera UI.** Uma skill que *gera* telas produz as mesmas telas
    em 50.000 projetos. Esta skill só serve para a IA **ver o que está ruim** — a tela vem de
    referência real e de componente pronto, não de prompt.

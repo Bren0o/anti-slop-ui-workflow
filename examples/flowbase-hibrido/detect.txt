@@ -1,0 +1,6 @@
+
+http://127.0.0.1:8765/hibrido/index.html
+  [oversized-h1] 92px h1, 56 chars, 34vh "Pipelines que rodam rápido e falham de um jeito legível."
+    → A full-sentence headline set at display size ends up dominating the viewport, leaving no room for anything else above the fold. A punchy one- or two-word headline at that size is fine — the problem is a long headline blown up too large. Set long headlines smaller, or tighten the copy.
+
+1 anti-pattern found.

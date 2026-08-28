@@ -44,7 +44,7 @@ A skill traz uma seção **Setup das ferramentas** com os comandos de cada uma:
 - Web Interface Guidelines — https://interfaces.rauno.me
 
 ## Prova: mesmo prompt, com e sem a skill
-`npx impeccable detect` na landing "FlowBase" gerada pelo mesmo modelo: **45 anti-padrões sem a skill → 9 com a skill → 0 após polish** (mobile: 42 → 0). HTMLs, relatórios e comparação em [`examples/`](examples/README.md).
+`npx impeccable detect` na landing "FlowBase" gerada pelo mesmo modelo: **45 anti-padrões sem a skill → 9 com a skill → 0 após polish** (mobile: 42 → 0). Terceira rodada, híbrido com direção estética própria: 1 achado intencional (h1 gigante), mobile 0 — e finalmente com identidade. HTMLs, relatórios e comparação em [`examples/`](examples/README.md).
 
 ## Estrutura
 ```
