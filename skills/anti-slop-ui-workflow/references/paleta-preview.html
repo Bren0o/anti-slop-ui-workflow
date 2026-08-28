@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paletas — escolha uma</title>
+<!--
+  TEMPLATE da skill anti-slop-ui-workflow (passo "Briefing").
+  Como usar: copiar para o scratchpad, editar SÓ o array PALETAS abaixo (3–4 opções),
+  servir por http (python -m http.server) e abrir no Chrome. O usuário escolhe pelo número.
+  Cada paleta: fundo, superfície, tinta, tinta secundária, 1 cor de marca, ok/erro/aviso,
+  fonte de display e fonte de texto (Google Fonts, carregadas no <link> abaixo).
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&family=Instrument+Serif&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono&family=DM+Sans:wght@400;700&family=Manrope:wght@400;800&display=swap" rel="stylesheet">
+<style>
+  :root { font-size: 16px; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #e9e9e6; color: #1a1a1a; font: 16px/1.5 system-ui, sans-serif; padding: 24px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .hint { color: #555; margin: 0 0 20px; font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }
+  .card { border: 1px solid #cfcfca; background: #fff; display: grid; grid-template-rows: auto auto 1fr; }
+  .card header { padding: 12px 16px; border-bottom: 1px solid #e3e3df; display: flex; justify-content: space-between; align-items: baseline; }
+  .card header b { font-size: 18px; }
+  .card header span { font-size: 13px; color: #666; }
+  .swatches { display: grid; grid-template-columns: repeat(8, 1fr); }
+  .swatches div { height: 56px; display: flex; align-items: flex-end; padding: 4px; font: 10px/1 ui-monospace, monospace; }
+  .mock { padding: 20px; min-height: 260px; }
+  .mock .kicker { font-family: var(--mono, ui-monospace); font-size: 12px; opacity: .7; margin-bottom: 8px; }
+  .mock h2 { margin: 0 0 8px; font-size: 30px; line-height: 1.1; }
+  .mock p { margin: 0 0 14px; max-width: 46ch; opacity: .85; }
+  .mock .btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .mock .btn { padding: 8px 14px; border: 1px solid; font-weight: 600; font-size: 14px; }
+  .mock .row { display: flex; gap: 8px; font: 12px/1 var(--mono, ui-monospace); }
+  .mock .row span { padding: 4px 8px; border: 1px solid; }
+</style>
+</head>
+<body>
+<h1>Paletas para: <span id="projeto"></span></h1>
+<p class="hint">Cada card é uma direção completa (cor + tipografia). Responda com o número. Se nenhuma serve, diga o que mudar em uma delas.</p>
+<div class="grid" id="grid"></div>
+<script>
+// ===== EDITE SÓ ISTO =====
+const PROJETO = "Nome do projeto";
+const PALETAS = [
+  { nome: "1 · Folha industrial", mood: "papel frio, carimbo, denso",
+    bg: "#F3F2EE", surface: "#FFFFFF", ink: "#16171A", ink2: "#5B5D63", brand: "#C43A14",
+    ok: "#1F7A3E", err: "#B3261E", warn: "#9A6700",
+    display: "'Archivo', sans-serif", text: "'IBM Plex Sans', sans-serif", mono: "'IBM Plex Mono', monospace" },
+  { nome: "2 · Editorial", mood: "serifa de display, claro, calmo",
+    bg: "#FBFAF7", surface: "#FFFFFF", ink: "#1C1B18", ink2: "#66625A", brand: "#1F4B99",
+    ok: "#2E7D4F", err: "#B42318", warn: "#B54708",
+    display: "'Instrument Serif', serif", text: "'Source Sans 3', sans-serif", mono: "'JetBrains Mono', monospace" },
+  { nome: "3 · Painel escuro sóbrio", mood: "dark sem neon, cinza quente, âmbar",
+    bg: "#141416", surface: "#1D1D20", ink: "#EDEDEA", ink2: "#A3A39E", brand: "#E0A030",
+    ok: "#5BBF7A", err: "#F26D5B", warn: "#E0A030",
+    display: "'Manrope', sans-serif", text: "'DM Sans', sans-serif", mono: "'JetBrains Mono', monospace" },
+  { nome: "4 · Verde de fábrica", mood: "claro, verde escuro como marca, técnico",
+    bg: "#F4F6F3", surface: "#FFFFFF", ink: "#141A16", ink2: "#5A665E", brand: "#0F5C3A",
+    ok: "#0F5C3A", err: "#A8321F", warn: "#8A6100",
+    display: "'DM Sans', sans-serif", text: "'DM Sans', sans-serif", mono: "'IBM Plex Mono', monospace" },
+];
+// ===== FIM =====
+document.getElementById('projeto').textContent = PROJETO;
+const grid = document.getElementById('grid');
+for (const p of PALETAS) {
+  const c = document.createElement('div'); c.className = 'card';
+  const sw = ['bg','surface','ink','ink2','brand','ok','err','warn']
+    .map(k => `<div style="background:${p[k]};color:${k==='bg'||k==='surface'?p.ink:'#fff'}">${k}<br>${p[k]}</div>`).join('');
+  c.innerHTML = `
+    <header><b>${p.nome}</b><span>${p.mood}</span></header>
+    <div class="swatches">${sw}</div>
+    <div class="mock" style="background:${p.bg};color:${p.ink};--mono:${p.mono};font-family:${p.text}">
+      <div class="kicker">${p.display.split(',')[0].replace(/'/g,'')} + ${p.text.split(',')[0].replace(/'/g,'')}</div>
+      <h2 style="font-family:${p.display}">Pipelines que o time inteiro consegue ler.</h2>
+      <p>Um arquivo de dez linhas, cache que se configura sozinho e um log que aponta a linha que quebrou.</p>
+      <div class="btns">
+        <span class="btn" style="background:${p.brand};color:#fff;border-color:${p.brand}">Ação principal</span>
+        <span class="btn" style="background:${p.surface};color:${p.ink};border-color:${p.ink2}">Secundária</span>
+      </div>
+      <div class="row">
+        <span style="color:${p.ok};border-color:${p.ok}">✓ passou</span>
+        <span style="color:${p.err};border-color:${p.err}">✕ falhou</span>
+        <span style="color:${p.warn};border-color:${p.warn}">! aviso</span>
+        <span style="color:${p.ink2};border-color:${p.ink2}">— pulado</span>
+      </div>
+    </div>`;
+  grid.appendChild(c);
+}
+</script>
+</body>
+</html>

@@ -57,8 +57,8 @@
   :focus-visible { outline: none; box-shadow: var(--focus); }
   h1, h2, h3, p { margin: 0; }
   h1, h2 { font-stretch: 125%; font-weight: 900; line-height: 0.98; letter-spacing: -0.02em; }
-  h1 { font-size: clamp(40px, 7.2vw, 96px); text-wrap: balance; }
-  h2 { font-size: clamp(30px, 4vw, 52px); }
+  h1 { font-size: clamp(34px, 4.6vw, 60px); text-wrap: balance; }
+  h2 { font-size: clamp(26px, 2.8vw, 38px); }
   h3 { font-size: 20px; font-weight: 700; font-stretch: 125%; line-height: 1.35; }
   p  { max-width: var(--measure); }
   .muted { color: var(--ink-2); }
@@ -176,7 +176,7 @@
   .stats div { padding: var(--s5) var(--s4); border-right: 1px solid var(--rule); }
   .stats div:last-child { border-right: 0; }
   @media (max-width: 860px) { .stats div:nth-child(2) { border-right: 0; } .stats div:nth-child(-n+2) { border-bottom: 1px solid var(--rule); } }
-  .stats strong { display: block; font: 900 clamp(36px, 4vw, 56px)/1 var(--sans); font-stretch: 125%; letter-spacing: -0.03em; }
+  .stats strong { display: block; font: 900 clamp(30px, 3vw, 40px)/1 var(--sans); font-stretch: 125%; letter-spacing: -0.03em; }
   .stats span { display: block; margin-top: var(--s2); font: 500 14px/1.4 var(--mono); color: var(--ink-2); }
 
   /* Tabela comparativa */
@@ -195,7 +195,7 @@
   .plans > div { padding: var(--s6); }
   .plans > div + div { border-left: 2px solid var(--ink); }
   .plans .tier { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s4); }
-  .plans .price { margin-top: var(--s5); font: 900 clamp(40px, 5vw, 64px)/1 var(--sans); font-stretch: 125%; letter-spacing: -0.03em; }
+  .plans .price { margin-top: var(--s5); font: 900 clamp(32px, 3.2vw, 44px)/1 var(--sans); font-stretch: 125%; letter-spacing: -0.03em; }
   .plans .price small { font: 500 16px/1.5 var(--mono); color: var(--ink-2); margin-left: var(--s2); }
   .plans ul { list-style: none; margin: var(--s5) 0 var(--s6); padding: 0; }
   .plans li { padding: var(--s2) 0; border-top: 1px solid var(--rule); font-size: 16px; }
@@ -205,7 +205,7 @@
 
   /* Depoimento como citação de documento */
   .quote { border-left: 6px solid var(--brand); padding: var(--s2) 0 var(--s2) var(--s5); max-width: 68ch; }
-  .quote p { font-size: clamp(20px, 2.2vw, 26px); font-weight: 500; line-height: 1.35; letter-spacing: -0.01em; }
+  .quote p { font-size: clamp(18px, 1.6vw, 22px); font-weight: 500; line-height: 1.35; letter-spacing: -0.01em; }
   .quote cite { display: block; margin-top: var(--s4); font: 500 14px/1.5 var(--mono); color: var(--ink-2); font-style: normal; }
 
   /* FAQ */
@@ -220,7 +220,7 @@
 
   /* CTA final: bloco sólido de marca, com peso */
   .cta { background: var(--brand); color: #fff; border-bottom: 0; padding: var(--s9) 0; }
-  .cta h2 { color: #fff; font-size: clamp(36px, 6vw, 84px); max-width: 14ch; }
+  .cta h2 { color: #fff; font-size: clamp(28px, 3.6vw, 48px); max-width: 14ch; }
   .cta p { margin-top: var(--s5); font-size: 20px; line-height: 1.45; color: #fff; }
   .cta form { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s6); max-width: 640px; }
   .cta label { display: block; width: 100%; font: 500 14px/1.5 var(--mono); }

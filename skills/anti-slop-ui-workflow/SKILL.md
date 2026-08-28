@@ -76,6 +76,30 @@ Se não estiver claro, perguntar ao usuário antes de gerar qualquer coisa.
 imagem porta bem — e o Claude no repo respeita os tokens. Tabela em
 `references/ferramentas-de-referencia-e-geracao.md` §3.
 
+## Briefing visual — antes de gerar qualquer tela nova
+
+Quando não existe layout nem marca, **perguntar antes de codar** (use `AskUserQuestion`, uma
+rodada só), e mostrar paleta em vez de descrever cor em texto:
+
+1. **Direção/mood** (3–4 opções curtas: ex. "folha industrial", "editorial", "painel escuro
+   sóbrio", "verde de fábrica") + **densidade** (arejado / compacto).
+2. **Paleta + tipografia — mostrar, não descrever.** Copiar
+   `references/paleta-preview.html` para o scratchpad, editar só o array `PALETAS` (3–4 opções
+   coerentes com as direções acima: fundo, superfície, tinta ×2, **uma** cor de marca,
+   ok/erro/aviso, fonte display + texto + mono), servir por http
+   (`python -m http.server 8765`) e abrir no Chrome. O usuário responde com o número ou pede
+   ajuste em uma delas. A escolhida vira o `:root` / `DESIGN.md`.
+3. **Tela e escala do usuário**: perguntar resolução e escala do Windows (o comum é 1366×768 ou
+   1920×1080 a **125–150 %**). Regra de tamanho independente da resposta:
+   - `h1` no máximo **60 px** (`clamp(34px, 4.6vw, 60px)`), `h2` ≤ 38 px, números/preços ≤ 44 px,
+     corpo 16–18 px. Nada em `vh`. Headline de 92 px "fica lindo" a 100 % num monitor 4K e vira
+     cartaz a 125 % em 1366 px — foi o feedback real no exemplo híbrido.
+   - Testar em `--viewport 1366x768` **e** 390×844 com o `detect`; olhar no Chrome com o zoom do
+     SO, não só a 100 %.
+
+Sem essa rodada, o agente escolhe sozinho e o usuário recebe uma direção que não pediu — foi o
+que aconteceu nas duas primeiras versões do exemplo FlowBase.
+
 ## Fluxo — na ordem, sem pular
 
 ### 0. Criar o rascunho com `ui-ux-pro-max` (só quando NÃO existe layout)
@@ -291,6 +315,8 @@ checar interfaces.rauno.me
 - [ ] Componente colado usa os tokens do projeto (fonte, espaçamento, cor)
 - [ ] Prompt/código de catálogo público foi **lido** antes de colar; `package.json` sem dependência estranha
 - [ ] Referência conferida em produto real (Mobbin) — não só Dribbble; no máximo 1 efeito Aceternity por página
+- [ ] Briefing feito: direção + paleta escolhida pelo usuário na prévia (`paleta-preview.html`), não pelo agente
+- [ ] `h1` ≤ 60 px, nada em `vh`; `detect` rodado em 1366×768 e 390×844
 - [ ] Estados: vazio, erro, loading, texto longo, mobile
 - [ ] Focus visível (box-shadow, não outline) e contraste WCAG AA
 - [ ] `references/web-interface-guidelines.md` percorrido inteiro — sem ❌ em Acessibilidade e Toque
