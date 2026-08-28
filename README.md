@@ -10,7 +10,7 @@ Uma base fixa de regras (como a UI/UX Pro Max) faz toda landing page sair igual:
 2. Referência visual por print — **Mobbin → Pinterest → Dribbble** (cada fonte tem um papel), um elemento por vez, aplicada com os tokens do projeto
 3. Pesquisa com base real via **LazyWeb MCP** (prompt em 3 passos)
 4. Blocos prontos — **Shoogle** (shadcn), **Aceternity UI**, **21st.dev** — + re-polish para respeitar fonte/espaçamento/cor; **checklist de prompt injection** antes de colar qualquer prompt público
-5. **Briefing visual antes de gerar**: direção + prévia de paletas no terminal e no navegador (`scripts/paleta.py`; seletor nativo via AskUserQuestion no Claude Code, pergunta em texto no Codex/Cursor) + teto de tamanho para escala do Windows (h1 ≤ 60 px, testar 1366×768)
+5. **Briefing visual antes de gerar**: direção estética escolhida pelo usuário (AskUserQuestion) + teto de tamanho para escala do Windows (h1 ≤ 60 px, testar 1366×768)
 6. Skills locais encadeadas (impeccable, ai-slop-check, polish-pass, critique-*, accessibility-audit…)
 7. Checklist final com as **Web Interface Guidelines** (interfaces.rauno.me)
 
@@ -54,10 +54,7 @@ skills/
     ├── SKILL.md
     └── references/
         ├── web-interface-guidelines.md              # checklist condensado de interfaces.rauno.me
-        ├── ferramentas-de-referencia-e-geracao.md   # Mobbin/Pinterest/Dribbble, Stitch/v0/Subframe, modelo por tarefa, catálogos, prompt injection
-        └── paleta-preview.html                      # prévia de 3–4 paletas+tipografia para o usuário escolher antes de gerar
-    └── scripts/
-        └── paleta.py                                # imprime as paletas no terminal (ANSI) e abre a prévia no navegador padrão
+        └── ferramentas-de-referencia-e-geracao.md   # Mobbin/Pinterest/Dribbble, Stitch/v0/Subframe, modelo por tarefa, catálogos, prompt injection
 examples/                                            # FlowBase com/sem skill + relatórios do detect
 ```
 

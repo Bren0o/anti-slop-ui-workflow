@@ -25,7 +25,7 @@ De A: headline gigante com voz, run/log como peça central, ritmo de seções, C
 
 Lição para a skill: sem referência ou direção estética, tirar o slop entrega uma página correta e anônima. A régua final é o olho de quem pediu.
 
-Ajuste após feedback "no Windows fica tudo estourado": h1 96→60 px, h2 52→38, números 56→40, preços 64→44 (a 125 % de escala, 96 px vira cartaz). `flowbase-paletas/` é a prévia de paletas que a skill agora manda mostrar antes de gerar.
+Ajuste após feedback "no Windows fica tudo estourado": h1 96→60 px, h2 52→38, números 56→40, preços 64→44 (a 125 % de escala, 96 px vira cartaz).
 
 Arquivos:
 - `flowbase-sem-skill/index.html` + `detect.txt`

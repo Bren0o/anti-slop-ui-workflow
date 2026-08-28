@@ -79,26 +79,14 @@ imagem porta bem — e o Claude no repo respeita os tokens. Tabela em
 ## Briefing visual — antes de gerar qualquer tela nova
 
 Quando não existe layout nem marca, **perguntar antes de codar** (use `AskUserQuestion`, uma
-rodada só), e mostrar paleta em vez de descrever cor em texto:
+rodada só):
 
 1. **Direção/mood** (3–4 opções curtas: ex. "folha industrial", "editorial", "painel escuro
    sóbrio", "verde de fábrica") + **densidade** (arejado / compacto).
-2. **Paleta + tipografia — mostrar, não descrever.** Copiar `scripts/paleta.py` para o
-   scratchpad, editar só `PROJETO` e a lista `PALETAS` (3–4 opções coerentes com as direções
-   acima: fundo, superfície, tinta ×2, **uma** cor de marca, ok/erro/aviso, fonte display +
-   texto + mono) e rodar `python paleta.py`. O script faz as duas coisas: imprime as amostras
-   **no próprio terminal** (blocos ANSI 24-bit — funciona em Claude Code, Codex, Cursor,
-   Windows Terminal) e **abre o HTML no navegador padrão** (gerado de
-   `references/paleta-preview.html`; `file://` funciona no navegador do usuário — só o Chrome
-   via MCP recusa). Então perguntar: no Claude Code, `AskUserQuestion` com as 3–4 paletas como
-   opções (o seletor nativo do terminal); em Codex/Cursor, pergunta em texto "qual número?". A
-   escolhida vira o `:root` / `DESIGN.md`. Sem browser (SSH, CI): só o terminal já basta.
-   **A prévia é editável**: cada amostra abre o seletor de cor do sistema (roda/espectro), as
-   fontes têm menu, o mockup e o contraste AA atualizam ao vivo; "Duplicar" cria um card livre.
-   O usuário clica **Copiar tokens** e cola o `:root` + JSON no chat — o agente usa esse bloco
-   literalmente, sem "corrigir" a escolha. Sempre oferecer as duas saídas: número **ou** tokens
-   colados. Pedido real que originou isso: "e se eu quiser escolher? seria bom ter um arco de
-   escolha de paleta".
+2. **Cor e tipografia saem da direção escolhida** — o agente define `:root` (fundo, superfície,
+   tinta ×2, **uma** cor de marca, ok/erro/aviso, 2 famílias) e mostra **a tela pronta**, não uma
+   prévia de paleta. Testado e rejeitado: página de seleção de paletas ("ficou horrível") — o
+   usuário quer julgar no resultado. Ajuste de cor é feito por feedback sobre a tela.
 3. **Tela e escala do usuário**: perguntar resolução e escala do Windows (o comum é 1366×768 ou
    1920×1080 a **125–150 %**). Regra de tamanho independente da resposta:
    - `h1` no máximo **60 px** (`clamp(34px, 4.6vw, 60px)`), `h2` ≤ 38 px, números/preços ≤ 44 px,
@@ -325,7 +313,7 @@ checar interfaces.rauno.me
 - [ ] Componente colado usa os tokens do projeto (fonte, espaçamento, cor)
 - [ ] Prompt/código de catálogo público foi **lido** antes de colar; `package.json` sem dependência estranha
 - [ ] Referência conferida em produto real (Mobbin) — não só Dribbble; no máximo 1 efeito Aceternity por página
-- [ ] Briefing feito: direção + paleta escolhida pelo usuário na prévia (`paleta-preview.html`), não pelo agente
+- [ ] Briefing feito: direção estética escolhida pelo usuário (uma rodada de perguntas), não pelo agente
 - [ ] `h1` ≤ 60 px, nada em `vh`; `detect` rodado em 1366×768 e 390×844
 - [ ] Estados: vazio, erro, loading, texto longo, mobile
 - [ ] Focus visível (box-shadow, não outline) e contraste WCAG AA
