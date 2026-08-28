@@ -1,6 +1,6 @@
 ---
 name: anti-slop-ui-workflow
-description: Fluxo completo para tirar "AI slop" de interfaces geradas por IA — auditar com Impeccable (detect/init/audit/typeset/adapt/harden/polish), puxar referências visuais (Dribbble, dark.design, LazyWeb MCP), montar com componentes prontos (Shoogle/shadcn) e polir de volta aos tokens do projeto. Use quando o usuário pedir landing page, hero, pricing, dashboard ou qualquer UI hi-fi, quando disser que a tela "parece feita por IA", ou antes de entregar frontend gerado por agente. A skill ui-ux-pro-max só pode servir de rascunho descartável (passo 0), nunca de entrega.
+description: Fluxo completo para tirar "AI slop" de interfaces geradas por IA — auditar com Impeccable (detect/init/audit/typeset/adapt/harden/polish), puxar referências visuais (Dribbble, dark.design, LazyWeb MCP), montar com componentes prontos (Shoogle/shadcn) e polir de volta aos tokens do projeto. Use quando o usuário pedir landing page, hero, pricing, dashboard ou qualquer UI hi-fi, quando disser que a tela "parece feita por IA", ou antes de entregar frontend gerado por agente. Regra de entrada: já tem layout → refina sem ui-ux-pro-max; não tem → cria com ui-ux-pro-max e depois refina.
 ---
 
 # Anti-Slop UI Workflow
@@ -35,16 +35,26 @@ Catálogo nomeado com o motivo de cada padrão: https://impeccable.style/slop
 Detector automático (baseado em padrões — **não é exato**, acha "slop" até no GitHub; use o
 olho para confirmar): `npx impeccable detect https://site.com` ou a extensão Chrome.
 
+## Porta de entrada — primeira pergunta, sempre
+
+**Já existe layout?**
+
+| Resposta | Caminho |
+|---|---|
+| **Sim** (tela legada, vibe-coded, v0/Lovable/Gemini, Figma implementado) | Vai direto para o **refinamento** (passo 1 em diante). **Não** invocar `ui-ux-pro-max` — ela só adicionaria slop em cima do que já existe. |
+| **Não** (página em branco) | **Criar primeiro com `ui-ux-pro-max`** (passo 0), depois **refinar** (passos 1–7). |
+
+Se não estiver claro, perguntar ao usuário antes de gerar qualquer coisa.
+
 ## Fluxo — na ordem, sem pular
 
-### 0. Rascunho descartável (o "modelo" que vai ser desmontado)
-Se ainda não existe tela nenhuma, gere um rascunho rápido com um prompt curto — pode ser com
-`ui-ux-pro-max`, como no vídeo (`landing page de ferramenta de CI chamada FlowBase`), ou com
-qualquer gerador. Regras do rascunho:
+### 0. Criar o rascunho com `ui-ux-pro-max` (só quando NÃO existe layout)
+Gerar a tela com um prompt curto, como no vídeo (`landing page de ferramenta de CI chamada
+FlowBase`). Regras do rascunho:
 - Prompt **curto**. Quanto mais especificação, mais genérico o resultado dessa skill.
 - Aceitar que vai sair slop: gradiente no título, card flutuando à direita, três cards. É o
   ponto de partida para medir e corrigir, não a entrega.
-- Se já existe uma tela (legada, vibe-coded, do Gemini/v0/Lovable), pular direto para o passo 1.
+- Rodar uma vez só. Não ficar iterando com a Pro Max — a iteração é do Impeccable.
 
 Depois, medir a baseline e instalar o Impeccable:
 ```bash
@@ -104,7 +114,9 @@ interação — coisas básicas provadas por pesquisa. Ler antes de dizer que te
 ## Fluxo resumido (o que funciona)
 
 ```
-rascunho rápido (ui-ux-pro-max ou tela existente)   ← modelo a ser desmontado
+Já tem layout?
+  ├─ sim → segue direto (sem ui-ux-pro-max)
+  └─ não → cria com ui-ux-pro-max (1x, prompt curto)
         ↓
 referência copiada (print) OU bloco do Shoogle
         ↓

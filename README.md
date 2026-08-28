@@ -4,7 +4,7 @@ Skill para Claude Code / Codex / Cursor que tira o "AI slop" de interfaces gerad
 
 Uma base fixa de regras (como a UI/UX Pro Max) faz toda landing page sair igual: gradiente no título, três cards, hero texto-esquerda/imagem-direita. Esta skill segue o fluxo do vídeo: usa esse rascunho genérico apenas como **modelo a ser desmontado** e guia o agente por **auditoria → correção → referência real → componentes prontos → polimento**:
 
-0. Rascunho rápido (UI/UX Pro Max ou tela existente) — descartável, nunca a entrega
+0. **Já tem layout?** Sim → refina direto, sem UI/UX Pro Max. Não → cria com UI/UX Pro Max (uma vez, prompt curto) e então refina
 1. **Impeccable** (`init → audit → typeset → adapt → harden → polish`, sempre nessa ordem)
 2. Referência visual por print (Dribbble, dark.design) aplicada com os tokens do projeto
 3. Pesquisa com base real via **LazyWeb MCP** (prompt em 3 passos)
