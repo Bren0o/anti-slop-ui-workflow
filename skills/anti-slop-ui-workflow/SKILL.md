@@ -31,7 +31,10 @@ resultado. Por isso:
 - Card "flutuando" à direita do hero
 - Estrutura navbar → hero (texto esq. / imagem dir.) → 3 features → pricing → CTA, sempre igual
 
-Catálogo nomeado com o motivo de cada padrão: https://impeccable.style/slop
+Catálogo nomeado com o motivo de cada padrão: https://impeccable.style/slop — escrito por
+Paul Bakaus (criador do jQuery UI, ex-Google for Creators). Quando a skill diz "isso é slop",
+a régua é a dele, não gosto pessoal: cada anti-padrão vem com o porquê. Cite o motivo ao
+apontar um problema, não só o nome do padrão.
 Detector automático (baseado em padrões — **não é exato**, acha "slop" até no GitHub; use o
 olho para confirmar): `npx impeccable detect https://site.com` ou a extensão Chrome.
 
