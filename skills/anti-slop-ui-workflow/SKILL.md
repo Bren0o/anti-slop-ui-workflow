@@ -83,12 +83,16 @@ rodada só), e mostrar paleta em vez de descrever cor em texto:
 
 1. **Direção/mood** (3–4 opções curtas: ex. "folha industrial", "editorial", "painel escuro
    sóbrio", "verde de fábrica") + **densidade** (arejado / compacto).
-2. **Paleta + tipografia — mostrar, não descrever.** Copiar
-   `references/paleta-preview.html` para o scratchpad, editar só o array `PALETAS` (3–4 opções
-   coerentes com as direções acima: fundo, superfície, tinta ×2, **uma** cor de marca,
-   ok/erro/aviso, fonte display + texto + mono), servir por http
-   (`python -m http.server 8765`) e abrir no Chrome. O usuário responde com o número ou pede
-   ajuste em uma delas. A escolhida vira o `:root` / `DESIGN.md`.
+2. **Paleta + tipografia — mostrar, não descrever.** Copiar `scripts/paleta.py` para o
+   scratchpad, editar só `PROJETO` e a lista `PALETAS` (3–4 opções coerentes com as direções
+   acima: fundo, superfície, tinta ×2, **uma** cor de marca, ok/erro/aviso, fonte display +
+   texto + mono) e rodar `python paleta.py`. O script faz as duas coisas: imprime as amostras
+   **no próprio terminal** (blocos ANSI 24-bit — funciona em Claude Code, Codex, Cursor,
+   Windows Terminal) e **abre o HTML no navegador padrão** (gerado de
+   `references/paleta-preview.html`; `file://` funciona no navegador do usuário — só o Chrome
+   via MCP recusa). Então perguntar: no Claude Code, `AskUserQuestion` com as 3–4 paletas como
+   opções (o seletor nativo do terminal); em Codex/Cursor, pergunta em texto "qual número?". A
+   escolhida vira o `:root` / `DESIGN.md`. Sem browser (SSH, CI): só o terminal já basta.
 3. **Tela e escala do usuário**: perguntar resolução e escala do Windows (o comum é 1366×768 ou
    1920×1080 a **125–150 %**). Regra de tamanho independente da resposta:
    - `h1` no máximo **60 px** (`clamp(34px, 4.6vw, 60px)`), `h2` ≤ 38 px, números/preços ≤ 44 px,
