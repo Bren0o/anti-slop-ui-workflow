@@ -81,8 +81,8 @@ Sair dele com a lista de "recommended actions" e executar **uma de cada vez**.
 |---|---|---|
 | `/impeccable typeset` | Conserta tipografia, textos quebrados, escala | Primeiro, resolve o mais visível |
 | `/impeccable adapt` | Adapta para outro contexto: tamanho de tela, dispositivo, plataforma | Portar desktop → mobile, sistema não-responsivo |
-| `/impeccable harden` | Blinda contra uso real: input estranho, erro, idioma longo, conexão ruim, estados vazios | Sempre antes de polish |
-| `/impeccable polish` | Refinamento fino. **Não é redesign.** | **Por último** — rodar cedo quebra as coisas |
+| `/impeccable harden` | Blinda contra uso real: input estranho, erro, idioma longo, conexão ruim, estados vazios. Conferir com as seções Interatividade/Toque/Acessibilidade de `references/web-interface-guidelines.md` | Sempre antes de polish |
+| `/impeccable polish` | Refinamento fino. **Não é redesign.** Conferir com Tipografia/Movimento/Design de `references/web-interface-guidelines.md` | **Por último** — rodar cedo quebra as coisas |
 
 Depois: `/impeccable audit` de novo e prompts pontuais ("ainda há gradientes soltos e fontes
 misturadas; cheque de novo"). Gradientes costumam sobreviver ao primeiro passe.
@@ -110,9 +110,14 @@ traz código, presets de tokens e um prompt de instalação. Estrela = pago.
   minha landing"*.
 - Outra stack (Vue, Svelte, HTML puro): pedir adaptação à IA; não é nativo.
 
-### 7. Regras que a web espera
-https://interfaces.rauno.me (Web Interface Guidelines): hover, focus, acessibilidade, tipografia,
-interação — coisas básicas provadas por pesquisa. Ler antes de dizer que terminou.
+### 7. Regras que a web espera (Web Interface Guidelines)
+**Ler `references/web-interface-guidelines.md`** (checklist condensado de
+https://interfaces.rauno.me, Rauno Freiberg) e percorrer todas as seções antes de dizer que
+terminou: Interatividade, Tipografia, Movimento, Toque, Performance, Acessibilidade, Design.
+São regras provadas por uso real, não gosto — e cobrem o que o Impeccable não vê: label que
+não foca o input, hover preso no touch, `font-size < 16px` dando zoom no iOS, tooltip em
+botão desabilitado, foco com `outline` cortando o `border-radius`, animação > 200 ms.
+Cada item ❌ vira P1 (acessibilidade/toque) ou P2 (resto) e volta para `harden`/`polish`.
 
 ## Setup das ferramentas (fazer uma vez por projeto)
 
@@ -178,4 +183,5 @@ checar interfaces.rauno.me
 - [ ] Nenhum gradiente em headline, nenhum grid-de-pontos de fundo sem motivo, no máximo 2 fontes
 - [ ] Componente colado usa os tokens do projeto (fonte, espaçamento, cor)
 - [ ] Estados: vazio, erro, loading, texto longo, mobile
-- [ ] Focus visível e contraste WCAG AA
+- [ ] Focus visível (box-shadow, não outline) e contraste WCAG AA
+- [ ] `references/web-interface-guidelines.md` percorrido inteiro — sem ❌ em Acessibilidade e Toque

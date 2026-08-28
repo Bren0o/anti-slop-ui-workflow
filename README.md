@@ -42,7 +42,9 @@ A skill traz uma seção **Setup das ferramentas** com os comandos de cada uma:
 ```
 skills/
 └── anti-slop-ui-workflow/
-    └── SKILL.md
+    ├── SKILL.md
+    └── references/
+        └── web-interface-guidelines.md   # checklist condensado de interfaces.rauno.me
 ```
 
 ## Licença
