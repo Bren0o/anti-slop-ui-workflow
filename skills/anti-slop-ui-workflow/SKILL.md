@@ -49,6 +49,11 @@ não só o nome do padrão.**
   pontos + gradiente radial, gradiente no headline com uma palavra destacada, três cards iguais
   com ícone em cima, card "flutuando" à direita do hero, estrutura navbar → hero → 3 features →
   pricing → CTA sempre igual. Parece "não-slop" e é muito slop.
+- **O "anti-slop" que virou slop (2026):** fundo creme/bege (`cream-palette`), serif de sistema
+  (Palatino/Georgia) nos títulos, uma cor terracota/mostarda, seções numeradas `01/02/03`, borda
+  esquerda colorida de 3 px em card (`side-tab` — "o tell mais reconhecível de UI de IA"). É o
+  preset "editorial de bom gosto" que o modelo escolhe por reflexo quando ouve "quente, humano,
+  papel". Medido: uma landing seguindo esta skill, sem esse aviso, saiu 100 % nesse preset.
 - O que o `detect` mais pega (medido nos exemplos do repo — 45 ocorrências numa landing "bonita"):
   `ai-color-palette` (ciano/roxo neon em fundo escuro), `kicker-above-heading` (label em caixa
   alta acima de todo título), `icon-tile-stack`, `line-length` (> 80 caracteres),
@@ -89,6 +94,10 @@ Uma rodada de `AskUserQuestion`, antes de codar:
   `:root` (fundo, superfície, tinta ×2, **uma** cor de marca, ok/erro/aviso, 2 famílias) e mostra
   **a tela pronta**; ajuste de cor vem de feedback sobre a tela. Página de seleção de paletas foi
   testada e rejeitada — o usuário julga pelo resultado.
+- **A paleta vem de um objeto real, não do adjetivo.** "Quente/humano" → creme + serif +
+  terracota é o reflexo do modelo, não uma escolha. Pedir ao usuário (ou tirar da referência) uma
+  âncora concreta: a cor da fachada, o uniforme, um print do produto real, uma foto. Sem âncora,
+  proibido: bege de fundo, serif de sistema em título, terracota/mostarda como marca.
 - **Tela e escala**: perguntar resolução e escala do Windows (comum: 1366×768 ou 1920×1080 a
   125–150 %). Independente da resposta: `h1` ≤ **60 px** (`clamp(34px, 4.6vw, 60px)`), `h2` ≤ 38 px,
   números/preços ≤ 44 px, corpo 16–18 px, nada em `vh`. Headline de 92 px é lindo a 100 % em 4K e
@@ -282,6 +291,9 @@ Já tem layout?
 | Colar prompt do 21st.dev/v0 sem ler | Confiança no catálogo | Prompt injection real; ler, preferir código, checar package.json |
 | Só Dribbble como referência | Mais bonito | Design impossível; conferir no Mobbin se produto real faz parecido |
 | `h1` de 90 px "lindo" no seu monitor | Testado só a 100 % em tela grande | ≤ 60 px, nada em `vh`, testar 1366×768 com zoom do SO |
+| Bege + serif + terracota + `01/02/03` | Direção "quente/humana" resolvida por reflexo | É o preset editorial de IA (`cream-palette`); âncora de cor num objeto real |
+| Borda esquerda colorida em card (`side-tab`) | Jeito rápido de mostrar estado | Fundo tingido inteiro, ponto de cor ou texto — nunca a faixa de 3 px |
+| Hero só texto à esquerda, metade direita vazia | "Sem card flutuante" virou "sem nada" | Produto real acima da dobra: a tela/grade ao lado ou logo abaixo do h1, dentro dos 768 px |
 | "Tenho 20 min, roda só o polish" | Prazo + custo afundado | Versão enxuta: `detect` → `audit` → `harden` → `polish`, olhar a tela; dizer o que ficou de fora (viewports, referência), não entregar em silêncio |
 
 ## Checklist antes de entregar UI
@@ -292,6 +304,7 @@ Já tem layout?
 - [ ] PRODUCT.md/DESIGN.md descrevem o produto real
 - [ ] `audit` sem P0/P1 abertos; `polish` rodou por último; usuário olhou a tela e aprovou
 - [ ] Nenhum gradiente em headline, nenhum grid-de-pontos sem motivo, no máximo 2 fontes
+- [ ] Nenhum `side-tab` (borda lateral colorida em card); fundo não é creme/bege por reflexo; produto real visível acima da dobra em 1366×768
 - [ ] Componente/print colado usa os tokens do projeto (fonte, espaçamento, cor)
 - [ ] Prompt/código de catálogo público foi **lido** antes de colar; `package.json` sem dependência estranha; nenhum token de MCP versionado
 - [ ] `h1` ≤ 60 px, nada em `vh`; `detect` rodado em 1366×768 e 390×844

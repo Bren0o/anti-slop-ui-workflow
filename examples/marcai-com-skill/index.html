@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<!--
+  Marcaí — landing page (HTML único, CSS inline, sem JS, sem CDN)
+
+  Direção escolhida no briefing: "recepção de clínica de bairro" — papel, madeira clara,
+  quente e humano. Densidade arejada. Tela-alvo 1920×1080 a 125 % (h1 ≤ 60 px, nada em vh).
+
+  Referências de produto real trazidas (um elemento por vez, remontado com os tokens daqui):
+  1. Calendly — a grade de horários da semana como visual principal: o produto aparece
+     como agenda de verdade (dias × horários, vagas ocupadas/livres), não como ilustração.
+  2. Doctoralia — o lembrete ao paciente com botões "Confirmar" / "Remarcar" dentro da
+     própria mensagem, e a resposta do paciente voltando para a agenda.
+  3. Agenda Simples — pricing de preço único, lista honesta do que está incluído (e do que
+     não está) e "sem cartão" ao lado do botão, em vez de tabela de três planos.
+
+  Evitado de propósito (catálogo impeccable.style/slop): gradiente no headline, kicker em
+  caixa alta acima de todo título, três cards iguais com ícone em cima, card flutuando à
+  direita do hero, grid de pontos, borda fina + sombra larga, glow, fonte da moda (Inter/
+  Geist), estrutura navbar → hero → 3 features → pricing → CTA idêntica a todo site.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marcaí — agenda online para clínicas de fisioterapia</title>
+<meta name="description" content="Agenda online com lembrete por WhatsApp e confirmação do paciente, feita para clínicas de fisioterapia de 1 a 5 profissionais. R$ 89/mês por clínica, 14 dias grátis sem cartão.">
+<style>
+  :root {
+    --papel: #F5EFE3;        /* fundo — papel levemente amarelado */
+    --superficie: #FFFCF6;   /* cartões, formulários */
+    --madeira: #E2D2B6;      /* bordas, divisórias, madeira clara */
+    --madeira-2: #C9B48E;    /* madeira mais escura para linhas */
+    --tinta: #2A231E;        /* texto principal */
+    --tinta-2: #6E6157;      /* texto secundário */
+    --marca: #B4512D;        /* uma cor de marca: terracota */
+    --marca-escura: #94401F;
+    --marca-clara: #F3DDD2;
+    --ok: #4B7A45;
+    --ok-clara: #DFEBD9;
+    --aviso: #A87716;
+    --aviso-clara: #F6EAD0;
+    --erro: #A2372A;
+    --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+    --sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --largura: 1120px;
+    --raio: 6px;
+    --foco: 0 0 0 3px var(--papel), 0 0 0 6px var(--marca);
+  }
+
+  * { box-sizing: border-box; }
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--marca-clara); color: var(--tinta); }
+
+  h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(34px, 4.2vw, 56px); text-wrap: balance; max-width: 22ch; }
+  h2 { font-size: clamp(26px, 2.8vw, 36px); text-wrap: balance; }
+  h3 { font-size: 21px; }
+  p { margin: 0; }
+  a { color: var(--marca-escura); text-underline-offset: 3px; }
+  strong, b { font-weight: 600; }
+
+  .container { max-width: var(--largura); margin: 0 auto; padding: 0 24px; }
+  .medida { max-width: 62ch; }
+  .secundario { color: var(--tinta-2); }
+
+  /* --- Botões --- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 0 22px;
+    font: 600 17px/1 var(--sans);
+    border-radius: var(--raio); border: 1px solid transparent;
+    text-decoration: none; cursor: pointer; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 120ms ease, transform 120ms ease;
+  }
+  .btn:focus-visible { outline: none; box-shadow: var(--foco); }
+  .btn:active { transform: scale(0.97); }
+  .btn-marca { background: var(--marca); color: #fff; }
+  .btn-marca:active { background: var(--marca-escura); }
+  .btn-contorno { background: transparent; color: var(--tinta); border-color: var(--madeira-2); }
+  .btn-contorno:active { background: var(--madeira); }
+  @media (hover: hover) {
+    .btn-marca:hover { background: var(--marca-escura); }
+    .btn-contorno:hover { background: var(--superficie); border-color: var(--tinta-2); }
+  }
+
+  /* --- Cabeçalho --- */
+  .topo {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--papel);
+    border-bottom: 1px solid var(--madeira);
+  }
+  .topo .container { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 72px; }
+  .logo { font-family: var(--serif); font-size: 26px; font-weight: 600; color: var(--tinta); text-decoration: none; letter-spacing: -0.01em; }
+  .logo span { color: var(--marca); }
+  .nav { display: flex; align-items: center; gap: 4px; }
+  .nav a { color: var(--tinta-2); text-decoration: none; padding: 10px 14px; border-radius: var(--raio); font-size: 16px; }
+  .nav a:focus-visible { outline: none; box-shadow: var(--foco); }
+  @media (hover: hover) { .nav a:not(.btn):hover { color: var(--tinta); background: var(--superficie); } }
+  .nav .btn { min-height: 42px; margin-left: 8px; color: #fff; }
+  @media (max-width: 720px) { .nav a:not(.btn) { display: none; } }
+
+  /* --- Hero --- */
+  .hero { padding: 72px 0 40px; }
+  .hero .lead { font-size: 20px; color: var(--tinta-2); margin-top: 20px; max-width: 56ch; }
+
+  .form-teste { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; max-width: 620px; }
+  .campo { flex: 1 1 260px; position: relative; }
+  .campo input {
+    width: 100%; min-height: 48px; padding: 0 14px;
+    font: 400 17px var(--sans); color: var(--tinta);
+    background: var(--superficie); border: 1px solid var(--madeira-2); border-radius: var(--raio);
+  }
+  .campo input::placeholder { color: var(--tinta-2); }
+  .campo input:focus-visible { outline: none; box-shadow: var(--foco); border-color: var(--marca); }
+  .campo input:user-invalid { border-color: var(--erro); }
+  .campo input:user-invalid + .aviso-campo { display: block; }
+  .aviso-campo { display: none; font-size: 15px; color: var(--erro); margin: 6px 2px 0; }
+  .nota { flex-basis: 100%; font-size: 15px; color: var(--tinta-2); margin-top: 2px; }
+  .sr-only { position: absolute; left: -9999px; }
+
+  /* --- Agenda (visual do produto) --- */
+  .agenda-wrap { padding: 24px 0 72px; }
+  .agenda {
+    background: var(--superficie);
+    border: 1px solid var(--madeira-2);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .agenda-topo { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--madeira); flex-wrap: wrap; }
+  .agenda-topo strong { font-family: var(--serif); font-weight: 500; font-size: 20px; }
+  .agenda-topo .prof { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { font-size: 15px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--madeira-2); color: var(--tinta-2); background: var(--papel); }
+  .chip.ativo { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+
+  .scroll-x { overflow-x: auto; }
+  .grade { display: grid; grid-template-columns: 64px repeat(5, minmax(150px, 1fr)); min-width: 820px; }
+  .grade > div { border-right: 1px solid var(--madeira); border-bottom: 1px solid var(--madeira); }
+  .grade > div:nth-child(6n) { border-right: 0; }
+  .dia { padding: 10px 12px; font-size: 15px; color: var(--tinta-2); background: var(--papel); }
+  .dia b { display: block; color: var(--tinta); font-size: 17px; }
+  .dia.hoje b { color: var(--marca); }
+  .hora { padding: 8px 10px; font-size: 14px; color: var(--tinta-2); font-variant-numeric: tabular-nums; background: var(--papel); }
+  .slot { padding: 6px; min-height: 68px; }
+  .consulta {
+    height: 100%; padding: 8px 10px; border-radius: 4px; font-size: 14px; line-height: 1.35;
+    border-left: 3px solid var(--madeira-2); background: var(--papel);
+  }
+  .consulta b { display: block; font-size: 15px; }
+  .consulta.confirmada { border-left-color: var(--ok); background: var(--ok-clara); }
+  .consulta.pendente { border-left-color: var(--aviso); background: var(--aviso-clara); }
+  .consulta.chegou { border-left-color: var(--marca); background: var(--marca-clara); }
+  .consulta small { display: block; color: var(--tinta-2); font-size: 13px; margin-top: 2px; }
+  .livre { height: 100%; border: 1px dashed var(--madeira-2); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--tinta-2); font-size: 14px; }
+  .legenda { display: flex; gap: 20px; flex-wrap: wrap; padding: 12px 20px; font-size: 15px; color: var(--tinta-2); border-top: 1px solid var(--madeira); }
+  .legenda span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 8px; vertical-align: -1px; }
+  .legenda .l-ok::before { background: var(--ok); }
+  .legenda .l-pend::before { background: var(--aviso); }
+  .legenda .l-cheg::before { background: var(--marca); }
+
+  /* --- Seções --- */
+  section.bloco { padding: 72px 0; border-top: 1px solid var(--madeira); }
+  .cabecalho-secao { max-width: 62ch; margin-bottom: 40px; }
+  .cabecalho-secao p { color: var(--tinta-2); font-size: 18px; margin-top: 14px; }
+
+  /* Como funciona — lista numerada em coluna, não três cards */
+  .passos { list-style: none; margin: 0; padding: 0; counter-reset: passo; }
+  .passos li {
+    counter-increment: passo;
+    display: grid; grid-template-columns: 56px 1fr; gap: 20px;
+    padding: 28px 0; border-top: 1px solid var(--madeira);
+  }
+  .passos li:last-child { border-bottom: 1px solid var(--madeira); }
+  .passos li::before {
+    content: counter(passo, decimal-leading-zero);
+    font-family: var(--serif); font-size: 30px; color: var(--marca); line-height: 1; padding-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .passos p { color: var(--tinta-2); margin-top: 6px; max-width: 64ch; }
+
+  /* Lembrete — conversa */
+  .dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  @media (max-width: 860px) { .dupla { grid-template-columns: 1fr; gap: 32px; } }
+  .conversa {
+    background: var(--superficie); border: 1px solid var(--madeira-2); border-radius: 10px;
+    padding: 20px; display: grid; gap: 12px; max-width: 440px;
+  }
+  .conversa .de { font-size: 14px; color: var(--tinta-2); padding-bottom: 8px; border-bottom: 1px solid var(--madeira); }
+  .balao { padding: 12px 14px; border-radius: 10px; font-size: 16px; line-height: 1.45; max-width: 90%; }
+  .balao.clinica { background: var(--papel); border: 1px solid var(--madeira); border-top-left-radius: 2px; }
+  .balao.paciente { background: var(--ok-clara); justify-self: end; border-top-right-radius: 2px; }
+  .balao time { display: block; font-size: 13px; color: var(--tinta-2); margin-top: 6px; text-align: right; font-variant-numeric: tabular-nums; }
+  .respostas { display: flex; gap: 8px; }
+  .respostas span { flex: 1; text-align: center; padding: 9px 0; border: 1px solid var(--madeira-2); border-radius: var(--raio); font-size: 15px; font-weight: 600; background: var(--superficie); }
+  .respostas span:first-child { color: var(--ok); border-color: var(--ok); }
+  .lista-simples { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 14px; }
+  .lista-simples li { padding-left: 28px; position: relative; color: var(--tinta-2); }
+  .lista-simples li::before { content: "—"; position: absolute; left: 0; color: var(--marca); }
+  .lista-simples b { color: var(--tinta); }
+
+  /* Para quem é — faixa de madeira */
+  .faixa {
+    background: var(--madeira); border-radius: 10px; padding: 40px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+  }
+  @media (max-width: 860px) { .faixa { grid-template-columns: 1fr; padding: 28px; } }
+  .faixa h3 { margin-bottom: 12px; }
+
+  /* Preço */
+  .preco {
+    background: var(--superficie); border: 1px solid var(--madeira-2); border-radius: 10px;
+    display: grid; grid-template-columns: 1.1fr 1fr; overflow: hidden;
+  }
+  @media (max-width: 860px) { .preco { grid-template-columns: 1fr; } }
+  .preco > div { padding: 40px; }
+  .preco .valor { font-family: var(--serif); font-size: clamp(36px, 3.4vw, 44px); line-height: 1; font-variant-numeric: tabular-nums; }
+  .preco .valor small { font-family: var(--sans); font-size: 17px; color: var(--tinta-2); font-weight: 400; margin-left: 4px; }
+  .preco .por { color: var(--tinta-2); margin-top: 10px; max-width: 40ch; }
+  .acoes { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .acoes .nota { flex-basis: auto; margin: 0; }
+  .incluso { background: var(--papel); border-left: 1px solid var(--madeira); }
+  @media (max-width: 860px) { .incluso { border-left: 0; border-top: 1px solid var(--madeira); } }
+  .incluso h3 { font-size: 17px; font-family: var(--sans); font-weight: 600; margin-bottom: 14px; }
+  .incluso ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .incluso li { padding-left: 26px; position: relative; }
+  .incluso li::before { content: ""; position: absolute; left: 0; top: 9px; width: 12px; height: 7px; border-left: 2px solid var(--ok); border-bottom: 2px solid var(--ok); transform: rotate(-45deg); }
+  .incluso li.nao { color: var(--tinta-2); }
+  .incluso li.nao::before { border: 0; width: 12px; height: 2px; background: var(--madeira-2); top: 13px; transform: none; }
+
+  /* FAQ — details nativo, sem JS */
+  .faq { max-width: 760px; }
+  .faq details { border-top: 1px solid var(--madeira); }
+  .faq details:last-child { border-bottom: 1px solid var(--madeira); }
+  .faq summary {
+    cursor: pointer; list-style: none; padding: 20px 40px 20px 0; position: relative;
+    font-weight: 600; font-size: 18px; user-select: none; -webkit-tap-highlight-color: transparent;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after {
+    content: "+"; position: absolute; right: 6px; top: 16px; font-family: var(--serif); font-size: 26px; color: var(--marca); line-height: 1;
+  }
+  .faq details[open] summary::after { content: "–"; }
+  .faq summary:focus-visible { outline: none; box-shadow: var(--foco); border-radius: 4px; }
+  .faq details p { color: var(--tinta-2); padding: 0 40px 22px 0; max-width: 64ch; }
+
+  /* CTA final */
+  .fim { padding: 72px 0 80px; border-top: 1px solid var(--madeira); }
+
+  footer { border-top: 1px solid var(--madeira); padding: 28px 0; font-size: 15px; color: var(--tinta-2); }
+  footer .container { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: var(--tinta-2); }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="container">
+    <a class="logo" href="#" aria-label="Marcaí, página inicial">Marca<span>í</span></a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#lembrete">Lembrete</a>
+      <a href="#preco">Preço</a>
+      <a href="#faq">Dúvidas</a>
+      <a class="btn btn-marca" href="#teste">Testar 14 dias</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero" id="teste">
+    <div class="container">
+      <h1>A agenda da sua clínica, sem caderno e sem “confirma pra mim?” no WhatsApp.</h1>
+      <p class="lead">O Marcaí marca, lembra o paciente um dia antes e recebe a confirmação sozinho. Feito para clínicas de fisioterapia com 1 a 5 profissionais.</p>
+
+      <form class="form-teste" action="#" method="post">
+        <div class="campo">
+          <label class="sr-only" for="email">Seu e-mail</label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" placeholder="seu@email.com.br" required>
+          <p class="aviso-campo" aria-live="polite">Digite um e-mail válido para criar a conta.</p>
+        </div>
+        <button class="btn btn-marca" type="submit">Começar os 14 dias grátis</button>
+        <p class="nota">Sem cartão de crédito. Sem fidelidade. Você importa a agenda de hoje em 10 minutos.</p>
+      </form>
+    </div>
+  </section>
+
+  <div class="agenda-wrap">
+    <div class="container">
+      <div class="agenda" role="img" aria-label="Exemplo da agenda semanal do Marcaí: segunda a sexta, das 8h às 10h, com consultas confirmadas, pendentes e um paciente que já chegou.">
+        <div class="agenda-topo">
+          <strong>Semana de 31 de agosto a 4 de setembro</strong>
+          <div class="prof">
+            <span class="chip ativo">Toda a clínica</span>
+            <span class="chip">Dra. Renata</span>
+            <span class="chip">Dr. Caio</span>
+            <span class="chip">Sala de pilates</span>
+          </div>
+        </div>
+        <div class="scroll-x">
+          <div class="grade">
+            <div class="hora"></div>
+            <div class="dia hoje"><b>Seg</b> 31 ago</div>
+            <div class="dia"><b>Ter</b> 1 set</div>
+            <div class="dia"><b>Qua</b> 2 set</div>
+            <div class="dia"><b>Qui</b> 3 set</div>
+            <div class="dia"><b>Sex</b> 4 set</div>
+
+            <div class="hora">08:00</div>
+            <div class="slot"><div class="consulta chegou"><b>Sérgio Amaral</b> Lombar · Dra. Renata <small>Chegou 07:52</small></div></div>
+            <div class="slot"><div class="consulta confirmada"><b>Lúcia Ferraz</b> Ombro · Dr. Caio <small>Confirmou ontem</small></div></div>
+            <div class="slot"><div class="livre">livre</div></div>
+            <div class="slot"><div class="consulta confirmada"><b>Pilates — turma A</b> 4 pessoas <small>Sala de pilates</small></div></div>
+            <div class="slot"><div class="consulta pendente"><b>Marcos Vilela</b> Joelho · Dra. Renata <small>Lembrete enviado</small></div></div>
+
+            <div class="hora">09:00</div>
+            <div class="slot"><div class="consulta confirmada"><b>Ana Beatriz</b> Pós-cirúrgico · Dr. Caio <small>Confirmou às 19:10</small></div></div>
+            <div class="slot"><div class="livre">livre</div></div>
+            <div class="slot"><div class="consulta confirmada"><b>Dona Ivone</b> Quadril · Dra. Renata <small>Confirmou às 07:30</small></div></div>
+            <div class="slot"><div class="consulta pendente"><b>Rafael Costa</b> Avaliação · Dr. Caio <small>Lembrete enviado</small></div></div>
+            <div class="slot"><div class="livre">livre</div></div>
+
+            <div class="hora">10:00</div>
+            <div class="slot"><div class="livre">livre</div></div>
+            <div class="slot"><div class="consulta confirmada"><b>Pilates — turma B</b> 3 pessoas <small>Sala de pilates</small></div></div>
+            <div class="slot"><div class="consulta confirmada"><b>João Pedro</b> Tornozelo · Dr. Caio <small>Confirmou ontem</small></div></div>
+            <div class="slot"><div class="livre">livre</div></div>
+            <div class="slot"><div class="consulta confirmada"><b>Helena Duarte</b> Coluna · Dra. Renata <small>Confirmou às 08:02</small></div></div>
+          </div>
+        </div>
+        <div class="legenda">
+          <span class="l-ok">Confirmado pelo paciente</span>
+          <span class="l-pend">Aguardando resposta</span>
+          <span class="l-cheg">Paciente na recepção</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="bloco" id="como-funciona">
+    <div class="container">
+      <div class="cabecalho-secao">
+        <h2>Três coisas que a recepção deixa de fazer na mão</h2>
+        <p>Não é um sistema de gestão. É a agenda, o lembrete e a confirmação — o que hoje toma o tempo de quem atende o telefone.</p>
+      </div>
+      <ol class="passos">
+        <li>
+          <div>
+            <h3>Você marca como marca hoje, só que num lugar só</h3>
+            <p>Agenda por profissional, por sala ou da clínica inteira. Sessões avulsas, pacotes de 10 e turmas de pilates cabem na mesma grade. O paciente também pode escolher um horário livre pelo link da clínica, se você quiser abrir essa porta.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Um dia antes, o paciente recebe o lembrete no WhatsApp dele</h3>
+            <p>Mensagem com nome do profissional, dia, hora e endereço. Sai do número da clínica, no horário que você definir. Ninguém precisa copiar e colar.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Ele responde “confirmar” ou “remarcar” — e a agenda muda sozinha</h3>
+            <p>Confirmou, fica verde. Pediu para remarcar, o horário abre e a recepção recebe um aviso. Quem não respondeu até a hora que você escolher aparece em amarelo para uma ligação rápida.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="bloco" id="lembrete">
+    <div class="container">
+      <div class="dupla">
+        <div>
+          <h2>O lembrete que a Dona Ivone lê e responde</h2>
+          <p class="secundario" style="font-size:18px;margin-top:14px">Texto curto, no WhatsApp que ela já usa. Nada de aplicativo para instalar, nada de link estranho.</p>
+          <ul class="lista-simples">
+            <li><b>Sai do número da clínica.</b> O paciente reconhece quem está mandando.</li>
+            <li><b>Você escreve o texto uma vez.</b> Trocar o modelo leva um minuto; dá para ter um por profissional.</li>
+            <li><b>Falta menos.</b> Quem não confirmou aparece em amarelo na véspera — a recepção liga só para esses. O relatório mostra quantas faltas você teve por mês, sem promessa de número mágico.</li>
+          </ul>
+        </div>
+        <div class="conversa" role="img" aria-label="Exemplo de conversa no WhatsApp: a clínica envia o lembrete com botões Confirmar e Remarcar; a paciente responde confirmando.">
+          <div class="de">Clínica Reviver Fisioterapia · (11) 4640-0000</div>
+          <div class="balao clinica">
+            Oi, Dona Ivone! Lembrando da sua sessão com a Dra. Renata <strong>amanhã, quarta, às 9h</strong>, na Rua das Acácias, 120. Pode confirmar?
+            <time datetime="2026-09-01T18:00">18:00</time>
+          </div>
+          <div class="respostas" aria-hidden="true"><span>Confirmar</span><span>Remarcar</span></div>
+          <div class="balao paciente">
+            Confirmado, obrigada.
+            <time datetime="2026-09-02T07:30">07:30</time>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloco">
+    <div class="container">
+      <div class="faixa">
+        <div>
+          <h3>Para quem é</h3>
+          <p>Clínica de bairro com 1 a 5 fisioterapeutas, agenda em caderno, planilha ou no WhatsApp da recepção. Você quer parar de ligar para confirmar e saber, ao chegar de manhã, quem vem hoje.</p>
+        </div>
+        <div>
+          <h3>Para quem não é</h3>
+          <p>Redes com várias unidades, quem precisa de prontuário eletrônico completo ou faturamento de convênio. Se for o seu caso, um sistema de gestão vai servir melhor — e o Marcaí não vai tentar ser um.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloco" id="preco">
+    <div class="container">
+      <div class="cabecalho-secao">
+        <h2>Um preço, por clínica</h2>
+        <p>Não cobramos por profissional nem por mensagem. Cresceu de 2 para 5 fisioterapeutas? O valor é o mesmo.</p>
+      </div>
+      <div class="preco">
+        <div>
+          <div class="valor">R$ 89<small>/mês</small></div>
+          <p class="por">por clínica, com todos os profissionais e lembretes ilimitados. Cancela quando quiser, pelo próprio sistema.</p>
+          <div class="acoes">
+            <a class="btn btn-marca" href="#teste">Testar 14 dias grátis</a>
+            <span class="nota">sem cartão</span>
+          </div>
+        </div>
+        <div class="incluso">
+          <h3>O que está incluído</h3>
+          <ul>
+            <li>Agenda por profissional, sala e clínica</li>
+            <li>Lembrete automático por WhatsApp</li>
+            <li>Confirmação e pedido de remarcação do paciente</li>
+            <li>Link público para o paciente escolher horário</li>
+            <li>Pacotes de sessões e turmas</li>
+            <li>Relatório de faltas e confirmações</li>
+            <li>Suporte por WhatsApp em horário comercial</li>
+            <li class="nao">Prontuário e faturamento de convênio (não fazemos)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloco" id="faq">
+    <div class="container">
+      <div class="cabecalho-secao">
+        <h2>Dúvidas comuns</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>Preciso trocar o número de WhatsApp da clínica?</summary>
+          <p>Não. Você conecta o número que já usa. Os lembretes saem dele e as respostas dos pacientes aparecem tanto no celular quanto na agenda.</p>
+        </details>
+        <details>
+          <summary>E se o paciente não tiver WhatsApp?</summary>
+          <p>A recepção vê esse paciente marcado em amarelo na véspera e liga. É o mesmo que você faz hoje, só que só para quem precisa.</p>
+        </details>
+        <details>
+          <summary>Como coloco a agenda que já tenho?</summary>
+          <p>Marcando as sessões da semana direto na grade ou enviando uma planilha. Na conta de teste a gente faz a primeira importação com você, por chamada, se preferir.</p>
+        </details>
+        <details>
+          <summary>Os dados dos pacientes ficam onde?</summary>
+          <p>Em servidor no Brasil, com acesso só da sua clínica. Você pode exportar ou apagar tudo a qualquer momento. A política de privacidade explica cada uso, sem letra miúda.</p>
+        </details>
+        <details>
+          <summary>O que acontece quando acabam os 14 dias?</summary>
+          <p>Você recebe um aviso e decide se quer continuar. Não cobramos nada sem você cadastrar o pagamento. Se não continuar, a agenda fica disponível para exportar por 30 dias.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="fim">
+    <div class="container">
+      <h2 class="medida">Amanhã de manhã você pode chegar já sabendo quem confirmou.</h2>
+      <div class="acoes">
+        <a class="btn btn-marca" href="#teste">Começar os 14 dias grátis</a>
+        <a class="btn btn-contorno" href="#como-funciona">Ver como funciona</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <span>© 2026 Marcaí · Itaquaquecetuba, SP</span>
+    <span><a href="#">Termos de uso</a> · <a href="#">Privacidade</a> · <a href="#">Falar com a gente</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

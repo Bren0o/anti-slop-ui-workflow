@@ -35,3 +35,13 @@ Arquivos:
 Leitura honesta: a versão sem skill é vistosa — e é exatamente o site de dev-tool que toda IA gera. A com skill muda **estrutura** (não só cor), mostra produto real e sobra só ajuste fino. O que a skill delega a ferramentas (Impeccable `audit`/`polish`, Mobbin, Stitch) não foi usado neste teste; com elas o resultado tende a ser melhor, não pior.
 
 Reproduzir: servir a pasta (`python -m http.server 8765`) e rodar `npx impeccable detect http://127.0.0.1:8765/<pasta>/index.html`.
+
+## Quarta rodada: Marcaí (`marcai-com-skill/`) — 29/08/2026
+
+Produto diferente (agenda para clínica de fisioterapia), skill na versão reordenada, briefing respondido ("recepção de clínica de bairro — quente, humano, papel"), sem Impeccable/Mobbin/browser para o agente gerador. Avaliado pelo detector **e** no olho, em 1366×768.
+
+`detect`: **15** desktop / **16** mobile (vs 45 do FlowBase sem skill). Mas o número engana: 10 são um único erro repetido (`side-tab`, borda esquerda de 3 px nos cards da agenda) e 1 é a identidade inteira (`cream-palette`).
+
+Leitura no olho: fugiu do slop clássico (sem gradiente, sem 3 cards, produto real na dobra seguinte, preço único, copy específica) e caiu no **segundo template de IA** — bege + Palatino + terracota + `01/02/03`. "Quente, humano, papel" foi resolvido por reflexo para o preset editorial. Hero com metade direita vazia; agenda abaixo da dobra; contraste 4.4:1.
+
+Lição gravada na skill: o "anti-slop" de 2026 tem cara própria e entra na lista de padrões; paleta precisa de âncora num objeto real, não de adjetivo; `side-tab` e hero vazio viram itens do checklist.

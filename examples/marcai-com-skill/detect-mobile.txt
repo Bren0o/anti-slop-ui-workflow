@@ -1,0 +1,36 @@
+
+http://127.0.0.1:8766/teste-marcai/index.html
+  [cramped-padding] 0px vertical padding (need ≥5.1px for 17px text)
+    → Text is too close to the edge of its container. Two shapes: (1) an element with its own text where the padding is too low for the font size, and (2) a wrapper with text-bearing children and near-zero padding against a visible boundary (border, outline, or non-transparent background) — children land flush against the boundary line. Add at least 8px (ideally 12–16px) of padding inside bordered, outlined, or colored containers.
+  [low-contrast] 4.4:1 (need 4.5:1) — text #b4512d on #f5efe3
+    → Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.
+  [side-tab] border-left: 3px + border-radius: 4px
+    → Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.
+  [side-tab] border-left: 3px + border-radius: 4px
+    → Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.
+  [side-tab] border-left: 3px + border-radius: 4px
+    → Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.
+  [side-tab] border-left: 3px + border-radius: 4px
+    → Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.
+  [side-tab] border-left: 3px + border-radius: 4px
+    → Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.
+  [side-tab] border-left: 3px + border-radius: 4px
+    → Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.
+  [side-tab] border-left: 3px + border-radius: 4px
+    → Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.
+  [side-tab] border-left: 3px + border-radius: 4px
+    → Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.
+  [side-tab] border-left: 3px + border-radius: 4px
+    → Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.
+  [side-tab] border-left: 3px + border-radius: 4px
+    → Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.
+  [cramped-padding] 0px vertical padding (need ≥5.1px for 17px text)
+    → Text is too close to the edge of its container. Two shapes: (1) an element with its own text where the padding is too low for the font size, and (2) a wrapper with text-bearing children and near-zero padding against a visible boundary (border, outline, or non-transparent background) — children land flush against the boundary line. Add at least 8px (ideally 12–16px) of padding inside bordered, outlined, or colored containers.
+  [cramped-padding] 0px vertical padding (need ≥5.1px for 17px text)
+    → Text is too close to the edge of its container. Two shapes: (1) an element with its own text where the padding is too low for the font size, and (2) a wrapper with text-bearing children and near-zero padding against a visible boundary (border, outline, or non-transparent background) — children land flush against the boundary line. Add at least 8px (ideally 12–16px) of padding inside bordered, outlined, or colored containers.
+  [edge-flush-cards] 3 cards flush against the right edge of div.scroll-x at rest (-19px gap, e.g. div.consulta.confirmada)
+    → Cards inside a horizontal scroller or tab panel sit flush against the container edge at rest while keeping a gutter on the other side, so their edges and rounded corners get cut off. Usually the panel is sized wider than its clip box. Keep a consistent inset on both sides.
+  [cream-palette] cream/beige page background rgb(245, 239, 227)
+    → A warm cream or beige page background has become the default "tasteful" AI surface, reached for by reflex. Choose a background that comes from a deliberate palette, not the safe warm off-white.
+
+16 anti-patterns found.
